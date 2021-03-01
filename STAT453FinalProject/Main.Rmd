@@ -5,3 +5,16 @@ date: "2021/3/1"
 output: html_document
 ---
 
+## Prepare packages
+```{r}
+library(survival)
+library(survminer)
+library(tidyverse)
+library(caret)
+```
+
+## Loading data
+```{r}
+rotterdam <- data(rotterdam)
+```
+
