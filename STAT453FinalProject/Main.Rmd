@@ -15,6 +15,72 @@ library(caret)
 
 ## Loading data
 ```{r}
-rotterdam <- data(rotterdam)
+data(rotterdam)
 ```
+
+Variable name         |     Description
+-----------------     |     -------------------------------------------------------
+`pid`                 |     patient identifier
+`year`                |     year of cancer incidence
+`age`                 |     age
+`meno`                |     menopausal status (0= premenopausal, 1= postmenopausal)
+`size`                |     tumor size, a factor with levels `<=20`, `20-50`, `>50`
+`grade`               |     tumor grade
+`nodes`               |     number of positive lymph nodes
+`pgr`                 |     progesterone receptors (fmol/l)
+`er`                  |     estrogen receptors (fmol/l)
+`hormon`              |     hormonal treatment (0=no, 1=yes)
+`chemo`               |     chemotherapy
+`rtime`               |     days to recurrence or last follow-up
+`recur`               |     0= no recurrence, 1= recurrence
+`dtime`               |     days to death or last follow-up
+`death`               |     0= alive, 1= dead
+
+## Motivation/ Research Question
+
+Explore what effects the survival of Breast Cancer patients and what might be a reasonable prediction model for the survival of patients.
+
+## Kaplan-Miere
+
+```{r}
+KM_None_Death <- survfit(Surv(dtime, death) ~ 1, data = rotterdam)
+KM_None_Death
+plot(KM_None_Death, conf.type = "plain", col = "blue", xlab="Days", ylab="Survival")
+```
+
+```{r}
+KM_None_Recur <- survfit(Surv(rtime, recur) ~ 1, data = rotterdam)
+KM_None_Recur
+plot(KM_None_Recur, conf.type = "plain", col = "red", xlab="Days", ylab="Survival")
+```
+
+```{r}
+rotterdam <- rotterdam %>%
+  mutate(Treatment = ifelse(chemo == 1 & hormon == 0, "Chemo", ifelse(chemo == 0 & hormon == 1, "Hormon", ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment"))))
+head(rotterdam)
+```
+
+```{r}
+KM_Treatment_Death <- survfit(Surv(dtime, death) ~ Treatment, data = rotterdam)
+KM_Treatment_Death
+plot(KM_Treatment_Death, conf.type = "plain", col = c("blue", "red", "purple", "green"), xlab="Days", ylab="Survival", lty=1:4)
+legend(1, 0.4, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
+       col=c("blue", "red", "purple", "green"), lty=1:4, cex=0.8,
+       title="Treatment Group", text.font=6)
+```
+
+
+
+```{r}
+KM_Treatment_Recur <- survfit(Surv(rtime, recur) ~ Treatment, data = rotterdam)
+KM_Treatment_Recur
+plot(KM_Treatment_Recur, conf.type = "plain", col = c("blue", "red", "purple", "green"), xlab="Days", ylab="Survival", lty=1:4)
+legend(1, 0.4, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
+       col=c("blue", "red", "purple", "green"), lty=1:4, cex=0.8,
+       title="Treatment Group", text.font=6)
+```
+
+## RSF vs. Cox PH model
+
+
 
