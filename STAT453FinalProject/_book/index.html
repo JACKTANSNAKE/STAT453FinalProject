@@ -53,66 +53,41 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
-}
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {  }
-@media screen {
-a.sourceLine::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 </style>
 
 </head>
@@ -132,7 +107,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.2" data-path="index.html"><a href="#loading-data"><i class="fa fa-check"></i><b>1.2</b> Loading data</a></li>
 <li class="chapter" data-level="1.3" data-path="index.html"><a href="#motivation-research-question"><i class="fa fa-check"></i><b>1.3</b> Motivation/ Research Question</a></li>
 <li class="chapter" data-level="1.4" data-path="index.html"><a href="#kaplan-miere"><i class="fa fa-check"></i><b>1.4</b> Kaplan-Miere</a></li>
-<li class="chapter" data-level="1.5" data-path="index.html"><a href="#rsf-vs.-cox-ph-model"><i class="fa fa-check"></i><b>1.5</b> RSF vs. Cox PH model</a></li>
+<li class="chapter" data-level="1.5" data-path="index.html"><a href="#rsf-vs.-cox-ph-model"><i class="fa fa-check"></i><b>1.5</b> RSF vs. Cox PH model</a></li>
 </ul></li>
 </ul>
 
@@ -163,7 +138,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="loading-data" class="section level2">
 <h2><span class="header-section-number">1.2</span> Loading data</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">data</span>(rotterdam)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(rotterdam)</code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -241,25 +216,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="kaplan-miere" class="section level2">
 <h2><span class="header-section-number">1.4</span> Kaplan-Miere</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">KM_None_Death &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> rotterdam)</a>
-<a class="sourceLine" id="cb2-2" title="2">KM_None_Death</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">KM_None_Death &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> rotterdam)
+KM_None_Death</code></pre></div>
 <pre><code>## Call: survfit(formula = Surv(dtime, death) ~ 1, data = rotterdam)
 ## 
 ##       n  events  median 0.95LCL 0.95UCL 
 ##    2982    1272    4033    3888    4309</code></pre>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">plot</span>(KM_None_Death, <span class="dt">conf.type =</span> <span class="st">&quot;plain&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;Days&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Survival&quot;</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(KM_None_Death, <span class="dt">conf.type =</span> <span class="st">&quot;plain&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;Days&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Survival&quot;</span>)</code></pre></div>
 <p><img src="Rotterdam_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">KM_None_Recur &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> rotterdam)</a>
-<a class="sourceLine" id="cb5-2" title="2">KM_None_Recur</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">KM_None_Recur &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> rotterdam)
+KM_None_Recur</code></pre></div>
 <pre><code>## Call: survfit(formula = Surv(rtime, recur) ~ 1, data = rotterdam)
 ## 
 ##       n  events  median 0.95LCL 0.95UCL 
 ##    2982    1518    2983    2719    3193</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">plot</span>(KM_None_Recur, <span class="dt">conf.type =</span> <span class="st">&quot;plain&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;Days&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Survival&quot;</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(KM_None_Recur, <span class="dt">conf.type =</span> <span class="st">&quot;plain&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;Days&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Survival&quot;</span>)</code></pre></div>
 <p><img src="Rotterdam_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">rotterdam &lt;-<span class="st"> </span>rotterdam <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Treatment =</span> <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="st">&quot;Chemo&quot;</span>, <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Hormon&quot;</span>, <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Both&quot;</span>, <span class="st">&quot;NaN/Other Treatment&quot;</span>))))</a>
-<a class="sourceLine" id="cb8-3" title="3"><span class="kw">head</span>(rotterdam)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rotterdam &lt;-<span class="st"> </span>rotterdam <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Treatment =</span> <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="st">&quot;Chemo&quot;</span>, <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Hormon&quot;</span>, <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Both&quot;</span>, <span class="st">&quot;NaN/Other Treatment&quot;</span>))))
+<span class="kw">head</span>(rotterdam)</code></pre></div>
 <pre><code>##   pid year age meno  size grade nodes pgr  er hormon chemo rtime recur dtime
 ## 1   1 1992  74    1  &lt;=20     3     0  35 291      0     0  1799     0  1799
 ## 2   2 1984  79    1 20-50     3     0  36 611      0     0  2828     0  2828
@@ -274,8 +249,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 4     0 NaN/Other Treatment
 ## 5     0 NaN/Other Treatment
 ## 6     0 NaN/Other Treatment</code></pre>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">KM_Treatment_Death &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>Treatment, <span class="dt">data =</span> rotterdam)</a>
-<a class="sourceLine" id="cb10-2" title="2">KM_Treatment_Death</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">KM_Treatment_Death &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>Treatment, <span class="dt">data =</span> rotterdam)
+KM_Treatment_Death</code></pre></div>
 <pre><code>## Call: survfit(formula = Surv(dtime, death) ~ Treatment, data = rotterdam)
 ## 
 ##                                  n events median 0.95LCL 0.95UCL
@@ -283,13 +258,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## Treatment=Chemo                552    250   3954    3425    5186
 ## Treatment=Hormon               311    151   2591    2361    3276
 ## Treatment=NaN/Other Treatment 2091    863   4159    4015    4654</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">plot</span>(KM_Treatment_Death, <span class="dt">conf.type =</span> <span class="st">&quot;plain&quot;</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;purple&quot;</span>, <span class="st">&quot;green&quot;</span>), <span class="dt">xlab=</span><span class="st">&quot;Days&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Survival&quot;</span>, <span class="dt">lty=</span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>)</a>
-<a class="sourceLine" id="cb12-2" title="2"><span class="kw">legend</span>(<span class="dv">1</span>, <span class="fl">0.4</span>, <span class="dt">legend=</span><span class="kw">c</span>(<span class="st">&quot;Both&quot;</span>, <span class="st">&quot;Chemo&quot;</span>,<span class="st">&quot;Hormon&quot;</span>, <span class="st">&quot;NaN/Other Treatment&quot;</span>),</a>
-<a class="sourceLine" id="cb12-3" title="3">       <span class="dt">col=</span><span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;purple&quot;</span>, <span class="st">&quot;green&quot;</span>), <span class="dt">lty=</span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">cex=</span><span class="fl">0.8</span>,</a>
-<a class="sourceLine" id="cb12-4" title="4">       <span class="dt">title=</span><span class="st">&quot;Treatment Group&quot;</span>, <span class="dt">text.font=</span><span class="dv">6</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(KM_Treatment_Death, <span class="dt">conf.type =</span> <span class="st">&quot;plain&quot;</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;purple&quot;</span>, <span class="st">&quot;green&quot;</span>), <span class="dt">xlab=</span><span class="st">&quot;Days&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Survival&quot;</span>, <span class="dt">lty=</span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>)
+<span class="kw">legend</span>(<span class="dv">1</span>, <span class="fl">0.4</span>, <span class="dt">legend=</span><span class="kw">c</span>(<span class="st">&quot;Both&quot;</span>, <span class="st">&quot;Chemo&quot;</span>,<span class="st">&quot;Hormon&quot;</span>, <span class="st">&quot;NaN/Other Treatment&quot;</span>),
+       <span class="dt">col=</span><span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;purple&quot;</span>, <span class="st">&quot;green&quot;</span>), <span class="dt">lty=</span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">cex=</span><span class="fl">0.8</span>,
+       <span class="dt">title=</span><span class="st">&quot;Treatment Group&quot;</span>, <span class="dt">text.font=</span><span class="dv">6</span>)</code></pre></div>
 <p><img src="Rotterdam_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">KM_Treatment_Recur &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span>Treatment, <span class="dt">data =</span> rotterdam)</a>
-<a class="sourceLine" id="cb13-2" title="2">KM_Treatment_Recur</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">KM_Treatment_Recur &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span>Treatment, <span class="dt">data =</span> rotterdam)
+KM_Treatment_Recur</code></pre></div>
 <pre><code>## Call: survfit(formula = Surv(rtime, recur) ~ Treatment, data = rotterdam)
 ## 
 ##                                  n events median 0.95LCL 0.95UCL
@@ -297,14 +272,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## Treatment=Chemo                552    324   2141    1749    2672
 ## Treatment=Hormon               311    169   1841    1468    2234
 ## Treatment=NaN/Other Treatment 2091   1012   3376    3087    3649</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="kw">plot</span>(KM_Treatment_Recur, <span class="dt">conf.type =</span> <span class="st">&quot;plain&quot;</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;purple&quot;</span>, <span class="st">&quot;green&quot;</span>), <span class="dt">xlab=</span><span class="st">&quot;Days&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Survival&quot;</span>, <span class="dt">lty=</span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>)</a>
-<a class="sourceLine" id="cb15-2" title="2"><span class="kw">legend</span>(<span class="dv">1</span>, <span class="fl">0.4</span>, <span class="dt">legend=</span><span class="kw">c</span>(<span class="st">&quot;Both&quot;</span>, <span class="st">&quot;Chemo&quot;</span>,<span class="st">&quot;Hormon&quot;</span>, <span class="st">&quot;NaN/Other Treatment&quot;</span>),</a>
-<a class="sourceLine" id="cb15-3" title="3">       <span class="dt">col=</span><span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;purple&quot;</span>, <span class="st">&quot;green&quot;</span>), <span class="dt">lty=</span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">cex=</span><span class="fl">0.8</span>,</a>
-<a class="sourceLine" id="cb15-4" title="4">       <span class="dt">title=</span><span class="st">&quot;Treatment Group&quot;</span>, <span class="dt">text.font=</span><span class="dv">6</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(KM_Treatment_Recur, <span class="dt">conf.type =</span> <span class="st">&quot;plain&quot;</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;purple&quot;</span>, <span class="st">&quot;green&quot;</span>), <span class="dt">xlab=</span><span class="st">&quot;Days&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Survival&quot;</span>, <span class="dt">lty=</span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>)
+<span class="kw">legend</span>(<span class="dv">1</span>, <span class="fl">0.4</span>, <span class="dt">legend=</span><span class="kw">c</span>(<span class="st">&quot;Both&quot;</span>, <span class="st">&quot;Chemo&quot;</span>,<span class="st">&quot;Hormon&quot;</span>, <span class="st">&quot;NaN/Other Treatment&quot;</span>),
+       <span class="dt">col=</span><span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;purple&quot;</span>, <span class="st">&quot;green&quot;</span>), <span class="dt">lty=</span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">cex=</span><span class="fl">0.8</span>,
+       <span class="dt">title=</span><span class="st">&quot;Treatment Group&quot;</span>, <span class="dt">text.font=</span><span class="dv">6</span>)</code></pre></div>
 <p><img src="Rotterdam_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 </div>
 <div id="rsf-vs.-cox-ph-model" class="section level2">
-<h2><span class="header-section-number">1.5</span> RSF vs. Cox PH model</h2>
+<h2><span class="header-section-number">1.5</span> RSF vs. Cox PH model</h2>
 <p>hkhkhjg</p>
 
 </div>
