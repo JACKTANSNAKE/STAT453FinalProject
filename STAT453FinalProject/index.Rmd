@@ -53,6 +53,59 @@ Variable name         |     Description
 
 Explore what effects the survival of Breast Cancer patients and what might be a reasonable prediction model for the survival of patients.
 
+## Data Exploration
+
+```{r}
+rotterdam <- rotterdam %>%
+  mutate(Treatment = ifelse(chemo == 1 & hormon == 0, "Chemo", ifelse(chemo == 0 & hormon == 1, "Hormon", ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment")))) 
+head(rotterdam)
+```
+
+```{r}
+ggplot(rotterdam, aes(x=age)) +
+  geom_histogram(color="white")
+```
+
+```{r}
+ggplot(rotterdam, aes(y=pgr, x=age)) + 
+    geom_point() 
+```
+
+```{r}
+ggplot(rotterdam, aes(y=er, x=age)) + 
+    geom_point() 
+```
+
+```{r}
+ggplot(rotterdam,aes(x=pgr,fill=Treatment)) +
+  geom_density(alpha = 0.5) +
+  scale_fill_manual(values = c("blue","purple", "red", "yellow"))
+```
+
+```{r}
+ggplot(rotterdam,aes(x=er,fill=Treatment)) +
+  geom_density(alpha = 0.5) +
+  scale_fill_manual(values = c("blue","purple", "red", "yellow"))
+```
+
+```{r}
+ggplot(rotterdam, aes(x=size, fill=Treatment))+
+  geom_bar(position = "fill")
+```
+
+```{r}
+ggplot(rotterdam, aes(x=grade, fill=Treatment))+
+  geom_bar(position = "fill")
+```
+
+```{r}
+ggplot(rotterdam, aes(x=age, fill=Treatment))+
+  geom_bar(position = "fill")
+```
+
+
+
+
 ## Kaplan-Miere
 
 ```{r}
@@ -67,11 +120,6 @@ KM_None_Recur
 plot(KM_None_Recur, conf.type = "plain", col = "red", xlab="Days", ylab="Survival")
 ```
 
-```{r}
-rotterdam <- rotterdam %>%
-  mutate(Treatment = ifelse(chemo == 1 & hormon == 0, "Chemo", ifelse(chemo == 0 & hormon == 1, "Hormon", ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment"))))
-head(rotterdam)
-```
 
 ```{r}
 KM_Treatment_Death <- survfit(Surv(dtime, death) ~ Treatment, data = rotterdam)
@@ -93,9 +141,27 @@ legend(1, 0.4, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
        title="Treatment Group", text.font=6)
 ```
 
-## RSF vs. Cox PH model
+## Cox-PH
 
-hkhkhjg
+```{r}
+coxph(Surv(dtime, death) ~ Treatment, data=rotterdam)
+```
 
 
+
+```{r}
+coxph(Surv(dtime, death) ~ Treatment + size + factor(grade) + age, data=rotterdam)
+```
+
+```{r}
+coxph(Surv(rtime, recur) ~ Treatment, data=rotterdam)
+```
+
+```{r}
+coxph(Surv(rtime, recur) ~ Treatment + size + factor(grade) + age + year, data=rotterdam)
+```
+
+```{r}
+coxph(Surv(dtime, death) ~ pgr + er, data=rotterdam)
+```
 
