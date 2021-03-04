@@ -1,12 +1,25 @@
 ---
-title: "Main"
+title: "Rotterdam"
 author: "JACKTANSNAKE"
-date: "2021/3/1"
-output: html_document
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: 
+  bookdown::pdf_book: default
+  bookdown::gitbook: default
+documentclass: book
+classoption: openany
 ---
 
+# Motivation
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```
+
 ## Prepare packages
-```{r}
+```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
 library(survival)
 library(survminer)
 library(tidyverse)
@@ -81,6 +94,8 @@ legend(1, 0.4, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
 ```
 
 ## RSF vs. Cox PH model
+
+hkhkhjg
 
 
 
