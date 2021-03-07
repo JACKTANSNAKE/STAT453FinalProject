@@ -11,157 +11,22 @@ classoption: openany
 ---
 
 # Motivation
-```{r include=FALSE}
-# automatically create a bib database for R packages
-knitr::write_bib(c(
-  .packages(), 'bookdown', 'knitr', 'rmarkdown'
-), 'packages.bib')
-```
 
-## Prepare packages
-```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
-library(survival)
-library(survminer)
-library(tidyverse)
-library(caret)
-```
+According to World Health Organization$*$, Cancer is a leading cause of death worldwide, accounting for an estimated 9.6 million deaths in 2018. And amongst all cancer types, breast cancer(along with lung cancer) has the top cases of death: 2.09 million cases in 2018. According to the CDC$*$, Breast cancer is also the second most common cancer among women in the United States, comprising 22.9% of invasive cancers in women and 16% of all female cancers. However, because of the cancer's characteristics, breast cancer patients have relatively high 5-year survival rate of 85% compared to other more lethal cancers according to research conducted in the UK$*$. We think it is worthwhile to look at the relationship between survival/recurrence time and some diagnostic criterion. We are also going to explore the effect of different treatments on survival/recurrence.
 
-## Loading data
-```{r}
-data(rotterdam)
-```
+## Some Background Information
 
-Variable name         |     Description
------------------     |     -------------------------------------------------------
-`pid`                 |     patient identifier
-`year`                |     year of cancer incidence
-`age`                 |     age
-`meno`                |     menopausal status (0= premenopausal, 1= postmenopausal)
-`size`                |     tumor size, a factor with levels `<=20`, `20-50`, `>50`
-`grade`               |     tumor grade
-`nodes`               |     number of positive lymph nodes
-`pgr`                 |     progesterone receptors (fmol/l)
-`er`                  |     estrogen receptors (fmol/l)
-`hormon`              |     hormonal treatment (0=no, 1=yes)
-`chemo`               |     chemotherapy
-`rtime`               |     days to recurrence or last follow-up
-`recur`               |     0= no recurrence, 1= recurrence
-`dtime`               |     days to death or last follow-up
-`death`               |     0= alive, 1= dead
+For doctors to be able to assess the severity and different types of breast cancer, researchers have come up with a diagnosing system called the TNM$*$ system that is widely used in the diagnostics of breast cancer:
 
-## Motivation/ Research Question
+**Tumor(T)**: How large is the primary tumor in the breast? 
 
-Explore what effects the survival of Breast Cancer patients and what might be a reasonable prediction model for the survival of patients.
+**Node (N)**: Has the tumor spread to the lymph nodes? If so, where, what size, and how many?
 
-## Data Exploration
+**Metastasis (M)**: Has the cancer spread to other parts of the body?
 
-```{r}
-rotterdam <- rotterdam %>%
-  mutate(Treatment = ifelse(chemo == 1 & hormon == 0, "Chemo", ifelse(chemo == 0 & hormon == 1, "Hormon", ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment")))) 
-head(rotterdam)
-```
+Generally, the results from the above three features are combined to form a diagnosis of a total of 5 stages of breast cancer: stage 0 (zero), which is non-invasive ductal carcinoma in situ (DCIS), and stages I through IV (1 through 4), which are used for invasive breast cancer.
 
-```{r}
-ggplot(rotterdam, aes(x=age)) +
-  geom_histogram(color="white")
-```
-
-```{r}
-ggplot(rotterdam, aes(y=pgr, x=age)) + 
-    geom_point() 
-```
-
-```{r}
-ggplot(rotterdam, aes(y=er, x=age)) + 
-    geom_point() 
-```
-
-```{r}
-ggplot(rotterdam,aes(x=pgr,fill=Treatment)) +
-  geom_density(alpha = 0.5) +
-  scale_fill_manual(values = c("blue","purple", "red", "yellow"))
-```
-
-```{r}
-ggplot(rotterdam,aes(x=er,fill=Treatment)) +
-  geom_density(alpha = 0.5) +
-  scale_fill_manual(values = c("blue","purple", "red", "yellow"))
-```
-
-```{r}
-ggplot(rotterdam, aes(x=size, fill=Treatment))+
-  geom_bar(position = "fill")
-```
-
-```{r}
-ggplot(rotterdam, aes(x=grade, fill=Treatment))+
-  geom_bar(position = "fill")
-```
-
-```{r}
-ggplot(rotterdam, aes(x=age, fill=Treatment))+
-  geom_bar(position = "fill")
-```
+We will be using data related to this system, especially Tumor and Node(since metastasis is often not recorded in datasets), to conduct our exploration.
 
 
-
-
-## Kaplan-Miere
-
-```{r}
-KM_None_Death <- survfit(Surv(dtime, death) ~ 1, data = rotterdam)
-KM_None_Death
-plot(KM_None_Death, conf.type = "plain", col = "blue", xlab="Days", ylab="Survival")
-```
-
-```{r}
-KM_None_Recur <- survfit(Surv(rtime, recur) ~ 1, data = rotterdam)
-KM_None_Recur
-plot(KM_None_Recur, conf.type = "plain", col = "red", xlab="Days", ylab="Survival")
-```
-
-
-```{r}
-KM_Treatment_Death <- survfit(Surv(dtime, death) ~ Treatment, data = rotterdam)
-KM_Treatment_Death
-plot(KM_Treatment_Death, conf.type = "plain", col = c("blue", "red", "purple", "green"), xlab="Days", ylab="Survival", lty=1:4)
-legend(1, 0.4, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
-       col=c("blue", "red", "purple", "green"), lty=1:4, cex=0.8,
-       title="Treatment Group", text.font=6)
-```
-
-
-
-```{r}
-KM_Treatment_Recur <- survfit(Surv(rtime, recur) ~ Treatment, data = rotterdam)
-KM_Treatment_Recur
-plot(KM_Treatment_Recur, conf.type = "plain", col = c("blue", "red", "purple", "green"), xlab="Days", ylab="Survival", lty=1:4)
-legend(1, 0.4, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
-       col=c("blue", "red", "purple", "green"), lty=1:4, cex=0.8,
-       title="Treatment Group", text.font=6)
-```
-
-## Cox-PH
-
-```{r}
-coxph(Surv(dtime, death) ~ Treatment, data=rotterdam)
-```
-
-
-
-```{r}
-coxph(Surv(dtime, death) ~ Treatment + size + factor(grade) + age, data=rotterdam)
-```
-
-```{r}
-coxph(Surv(rtime, recur) ~ Treatment, data=rotterdam)
-```
-
-```{r}
-coxph(Surv(rtime, recur) ~ Treatment + size + factor(grade) + age + year, data=rotterdam)
-```
-
-```{r}
-coxph(Surv(dtime, death) ~ pgr + er, data=rotterdam)
-```
 

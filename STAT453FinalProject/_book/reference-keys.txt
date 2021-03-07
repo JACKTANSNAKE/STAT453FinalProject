@@ -1,6 +1,11 @@
 motivation
-prepare-packages
+some-background-information
+data-exploration
 loading-data
-motivation-research-question
+data-wrangling
+data-visualizations
+survival
+loading-data-1
 kaplan-miere
-rsf-vs.-cox-ph-model
+cox-ph
+reference

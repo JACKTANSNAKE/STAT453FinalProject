@@ -1,0 +1,76 @@
+# Survival
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+library(survival)
+library(survminer)
+library(tidyverse)
+library(caret)
+library(hrbrthemes)
+library(viridis)
+```
+
+## Loading Data
+```{r}
+data(rotterdam)
+```
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+rotterdam <- rotterdam %>%
+  mutate(Treatment = ifelse(chemo == 1 & hormon == 0, "Chemo", ifelse(chemo == 0 & hormon == 1, "Hormon", ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment"))))
+```
+
+## Kaplan-Miere
+
+```{r}
+KM_None_Death <- survfit(Surv(dtime, death) ~ 1, data = rotterdam)
+plot(KM_None_Death, conf.type = "plain", col = "blue", xlab="Days", ylab="Survival")
+```
+
+```{r}
+KM_None_Recur <- survfit(Surv(rtime, recur) ~ 1, data = rotterdam)
+plot(KM_None_Recur, conf.type = "plain", col = "red", xlab="Days", ylab="Survival")
+```
+
+
+```{r warning=FALSE}
+KM_Treatment_Death <- survfit(Surv(dtime, death) ~ Treatment, data = rotterdam)
+plot(KM_Treatment_Death, conf.int = FALSE, col = c("blue", "red", "purple", "green"), xlab="Days", ylab="Survival", lty=1:4)
+legend(1, 0.4, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
+       col=c("blue", "red", "purple", "green"), lty=1:4, cex=0.8,
+       title="Treatment Group", text.font=6)
+```
+
+
+
+```{r}
+KM_Treatment_Recur <- survfit(Surv(rtime, recur) ~ Treatment, data = rotterdam)
+plot(KM_Treatment_Recur, conf.int = FALSE, col = c("blue", "red", "purple", "green"), xlab="Days", ylab="Survival", lty=1:4)
+legend(1, 0.4, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
+       col=c("blue", "red", "purple", "green"), lty=1:4, cex=0.8,
+       title="Treatment Group", text.font=6)
+```
+
+## Cox-PH
+
+```{r}
+coxph(Surv(dtime, death) ~ Treatment, data=rotterdam)
+```
+
+
+
+```{r}
+coxph(Surv(dtime, death) ~ Treatment + size + factor(grade) + age, data=rotterdam)
+```
+
+```{r}
+coxph(Surv(rtime, recur) ~ Treatment, data=rotterdam)
+```
+
+```{r}
+coxph(Surv(rtime, recur) ~ Treatment + size + factor(grade) + age + year, data=rotterdam)
+```
+
+```{r}
+coxph(Surv(dtime, death) ~ pgr + er, data=rotterdam)
+```
+
