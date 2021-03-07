@@ -2,57 +2,62 @@
 <html lang="" xml:lang="">
 <head>
 
-<meta charset="utf-8" />
-<meta name="generator" content="pandoc" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="2.3 Data visualizations | Rotterdam" />
-<meta property="og:type" content="book" />
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter4 Treatment vs. Survival Times | Rotterdam</title>
+  <meta name="description" content="Chapter4 Treatment vs. Survival Times | Rotterdam" />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
+  <meta property="og:title" content="Chapter4 Treatment vs. Survival Times | Rotterdam" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
 
-
-
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter4 Treatment vs. Survival Times | Rotterdam" />
+  
+  
+  
 
 <meta name="author" content="JACK TAN, YIMING MIAO" />
 
+
 <meta name="date" content="2021-03-08" />
 
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
-
-<meta name="description" content="2.3 Data visualizations | Rotterdam">
-
-<title>2.3 Data visualizations | Rotterdam</title>
-
-<script src="libs/jquery-1.11.3/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
-<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
-<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
-<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<style>h1 {font-size: 34px;}
-       h1.title {font-size: 38px;}
-       h2 {font-size: 30px;}
-       h3 {font-size: 24px;}
-       h4 {font-size: 18px;}
-       h5 {font-size: 16px;}
-       h6 {font-size: 12px;}
-       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
-       pre:not([class]) { background-color: white }</style>
-<script src="libs/navigation-1.1/tabsets.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="diagnositcs-vs-survival-times.html"/>
+<link rel="next" href="survival.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
 
 
-<style type="text/css">code{white-space: pre;}</style>
+
+
+
+
+
+
+
+
+
 <style type="text/css">
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
 a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
@@ -109,92 +114,59 @@ code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 
-
-<link rel="stylesheet" href="toc.css" type="text/css" />
-
-<style type = "text/css">
-.main-container {
-  max-width: 940px;
-  margin-left: auto;
-  margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
-img {
-  max-width:100%;
-  height: auto;
-}
-</style>
 </head>
 
 <body>
 
-<div class="container-fluid main-container">
 
 
-<div class="row">
-<div class="col-sm-12">
-<div id="TOC">
-<ul>
-<li class="has-sub"><a href="index.html#motivation"><span class="toc-section-number">1</span> Motivation</a><ul>
-<li><a href="1-1-some-background-information.html#some-background-information"><span class="toc-section-number">1.1</span> Some Background Information</a></li>
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Motivation</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#some-background-information"><i class="fa fa-check"></i><b>1.1</b> Some Background Information</a></li>
 </ul></li>
-<li class="has-sub"><a href="2-data-exploration.html#data-exploration"><span class="toc-section-number">2</span> Data Exploration</a><ul>
-<li><a href="2-1-loading-data.html#loading-data"><span class="toc-section-number">2.1</span> Loading Data</a></li>
-<li><a href="2-2-data-wrangling.html#data-wrangling"><span class="toc-section-number">2.2</span> Data Wrangling</a></li>
-<li class="has-sub"><a href="2-3-data-visualizations.html#data-visualizations"><span class="toc-section-number">2.3</span> Data visualizations</a><ul>
-<li><a href="2-3-data-visualizations.html#diagnositcs-vs.-survival-times"><span class="toc-section-number">2.3.1</span> Diagnositcs vs. Survival Times</a></li>
-<li><a href="2-3-data-visualizations.html#treatment-vs.-survival-times"><span class="toc-section-number">2.3.2</span> Treatment vs. Survival Times</a></li>
+<li class="chapter" data-level="2" data-path="data-exploration.html"><a href="data-exploration.html"><i class="fa fa-check"></i><b>2</b> Data Exploration</a><ul>
+<li class="chapter" data-level="2.1" data-path="data-exploration.html"><a href="data-exploration.html#loading-data"><i class="fa fa-check"></i><b>2.1</b> Loading Data</a></li>
+<li class="chapter" data-level="2.2" data-path="data-exploration.html"><a href="data-exploration.html#data-wrangling"><i class="fa fa-check"></i><b>2.2</b> Data Wrangling</a></li>
+<li class="chapter" data-level="2.3" data-path="data-exploration.html"><a href="data-exploration.html#data-visualizations"><i class="fa fa-check"></i><b>2.3</b> Data visualizations</a></li>
 </ul></li>
+<li class="chapter" data-level="3" data-path="diagnositcs-vs-survival-times.html"><a href="diagnositcs-vs-survival-times.html"><i class="fa fa-check"></i><b>3</b> Diagnositcs vs. Survival Times</a></li>
+<li class="chapter" data-level="4" data-path="treatment-vs-survival-times.html"><a href="treatment-vs-survival-times.html"><i class="fa fa-check"></i><b>4</b> Treatment vs. Survival Times</a></li>
+<li class="chapter" data-level="5" data-path="survival.html"><a href="survival.html"><i class="fa fa-check"></i><b>5</b> Survival</a><ul>
+<li class="chapter" data-level="5.1" data-path="survival.html"><a href="survival.html#loading-data-1"><i class="fa fa-check"></i><b>5.1</b> Loading Data</a></li>
+<li class="chapter" data-level="5.2" data-path="survival.html"><a href="survival.html#kaplan-miere"><i class="fa fa-check"></i><b>5.2</b> Kaplan-Miere</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="survival.html"><a href="survival.html#size-vs.-survival-times"><i class="fa fa-check"></i><b>5.2.1</b> <code>size</code> vs. Survival Times</a></li>
+<li class="chapter" data-level="5.2.2" data-path="survival.html"><a href="survival.html#nodes_level-vs.-survival-times"><i class="fa fa-check"></i><b>5.2.2</b> <code>Nodes_level</code> vs. Survival Times</a></li>
+<li class="chapter" data-level="5.2.3" data-path="survival.html"><a href="survival.html#treatment-vs.-survival-times-1"><i class="fa fa-check"></i><b>5.2.3</b> <code>Treatment</code> vs. Survival Times</a></li>
 </ul></li>
-<li class="has-sub"><a href="3-survival.html#survival"><span class="toc-section-number">3</span> Survival</a><ul>
-<li><a href="3-1-loading-data-1.html#loading-data-1"><span class="toc-section-number">3.1</span> Loading Data</a></li>
-<li class="has-sub"><a href="3-2-kaplan-miere.html#kaplan-miere"><span class="toc-section-number">3.2</span> Kaplan-Miere</a><ul>
-<li><a href="3-2-kaplan-miere.html#size-vs.-survival-times"><span class="toc-section-number">3.2.1</span> <code>size</code> vs. Survival Times</a></li>
-<li><a href="3-2-kaplan-miere.html#nodes_level-vs.-survival-times"><span class="toc-section-number">3.2.2</span> <code>Nodes_level</code> vs. Survival Times</a></li>
-<li><a href="3-2-kaplan-miere.html#treatment-vs.-survival-times-1"><span class="toc-section-number">3.2.3</span> <code>Treatment</code> vs. Survival Times</a></li>
+<li class="chapter" data-level="5.3" data-path="survival.html"><a href="survival.html#parametric-models"><i class="fa fa-check"></i><b>5.3</b> Parametric Models</a></li>
+<li class="chapter" data-level="5.4" data-path="survival.html"><a href="survival.html#cox-ph"><i class="fa fa-check"></i><b>5.4</b> Cox-PH</a></li>
 </ul></li>
-<li><a href="3-3-parametric-models.html#parametric-models"><span class="toc-section-number">3.3</span> Parametric Models</a></li>
-<li><a href="3-4-cox-ph.html#cox-ph"><span class="toc-section-number">3.4</span> Cox-PH</a></li>
-</ul></li>
-<li><a href="4-reference.html#reference"><span class="toc-section-number">4</span> Reference</a></li>
+<li class="chapter" data-level="6" data-path="reference.html"><a href="reference.html"><i class="fa fa-check"></i><b>6</b> Reference</a></li>
 </ul>
-</div>
-</div>
-</div>
-<div class="row">
-<div class="col-sm-12">
-<div id="data-visualizations" class="section level2">
-<h2><span class="header-section-number">2.3</span> Data visualizations</h2>
-<div id="diagnositcs-vs.-survival-times" class="section level3">
-<h3><span class="header-section-number">2.3.1</span> Diagnositcs vs. Survival Times</h3>
-<p><code>size</code> vs. <code>dtime</code></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> size, <span class="dt">y =</span> dtime, <span class="dt">fill =</span> size)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb8-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
-<p><img src="Rotterdam_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<p><code>size</code> vs. <code>rtime</code></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> size, <span class="dt">y =</span> rtime, <span class="dt">fill =</span> size)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
-<p><img src="Rotterdam_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p><code>Nodes_level</code> vs. <code>dtime</code></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> Nodes_level, <span class="dt">y =</span> dtime, <span class="dt">fill =</span> Nodes_level)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb10-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
-<p><img src="Rotterdam_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<p><code>Nodes_level</code> vs. <code>rtime</code></p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> Nodes_level, <span class="dt">y =</span> rtime, <span class="dt">fill =</span> Nodes_level)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb11-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
-<p><img src="Rotterdam_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-</div>
-<div id="treatment-vs.-survival-times" class="section level3">
-<h3><span class="header-section-number">2.3.2</span> Treatment vs. Survival Times</h3>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Rotterdam</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="treatment-vs.-survival-times" class="section level1">
+<h1><span class="header-section-number">Chapter4</span> Treatment vs. Survival Times</h1>
 <p><code>Treatment</code> vs. <code>dtime</code></p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> Treatment, <span class="dt">y =</span> dtime, <span class="dt">fill =</span> Treatment)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb12-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
@@ -235,26 +207,76 @@ img {
 <pre><code>## [1] 0.2297116</code></pre>
 
 </div>
-</div>
-<!-- </div> -->
-<p style="text-align: center;">
-<a href="2-2-data-wrangling.html"><button class="btn btn-default">Previous</button></a>
-<a href="3-survival.html"><button class="btn btn-default">Next</button></a>
-</p>
-</div>
-</div>
+            </section>
 
-
-</div>
-
+          </div>
+        </div>
+      </div>
+<a href="diagnositcs-vs-survival-times.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="survival.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
-
-// add bootstrap table styles to pandoc tables
-$(document).ready(function () {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["Rotterdam.pdf"],
+"toc": {
+"collapse": "subsection"
+}
 });
-
+});
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
+
 </html>

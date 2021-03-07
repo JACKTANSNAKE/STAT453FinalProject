@@ -12,7 +12,7 @@
 
 
 
-<meta name="author" content="JACKTANSNAKE" />
+<meta name="author" content="JACK TAN, YIMING MIAO" />
 
 <meta name="date" content="2021-03-08" />
 
@@ -150,12 +150,20 @@ img {
 <li class="has-sub"><a href="2-data-exploration.html#data-exploration"><span class="toc-section-number">2</span> Data Exploration</a><ul>
 <li><a href="2-1-loading-data.html#loading-data"><span class="toc-section-number">2.1</span> Loading Data</a></li>
 <li><a href="2-2-data-wrangling.html#data-wrangling"><span class="toc-section-number">2.2</span> Data Wrangling</a></li>
-<li><a href="2-3-data-visualizations.html#data-visualizations"><span class="toc-section-number">2.3</span> Data visualizations</a></li>
+<li class="has-sub"><a href="2-3-data-visualizations.html#data-visualizations"><span class="toc-section-number">2.3</span> Data visualizations</a><ul>
+<li><a href="2-3-data-visualizations.html#diagnositcs-vs.-survival-times"><span class="toc-section-number">2.3.1</span> Diagnositcs vs. Survival Times</a></li>
+<li><a href="2-3-data-visualizations.html#treatment-vs.-survival-times"><span class="toc-section-number">2.3.2</span> Treatment vs. Survival Times</a></li>
+</ul></li>
 </ul></li>
 <li class="has-sub"><a href="3-survival.html#survival"><span class="toc-section-number">3</span> Survival</a><ul>
 <li><a href="3-1-loading-data-1.html#loading-data-1"><span class="toc-section-number">3.1</span> Loading Data</a></li>
-<li><a href="3-2-kaplan-miere.html#kaplan-miere"><span class="toc-section-number">3.2</span> Kaplan-Miere</a></li>
-<li><a href="3-3-cox-ph.html#cox-ph"><span class="toc-section-number">3.3</span> Cox-PH</a></li>
+<li class="has-sub"><a href="3-2-kaplan-miere.html#kaplan-miere"><span class="toc-section-number">3.2</span> Kaplan-Miere</a><ul>
+<li><a href="3-2-kaplan-miere.html#size-vs.-survival-times"><span class="toc-section-number">3.2.1</span> <code>size</code> vs. Survival Times</a></li>
+<li><a href="3-2-kaplan-miere.html#nodes_level-vs.-survival-times"><span class="toc-section-number">3.2.2</span> <code>Nodes_level</code> vs. Survival Times</a></li>
+<li><a href="3-2-kaplan-miere.html#treatment-vs.-survival-times-1"><span class="toc-section-number">3.2.3</span> <code>Treatment</code> vs. Survival Times</a></li>
+</ul></li>
+<li><a href="3-3-parametric-models.html#parametric-models"><span class="toc-section-number">3.3</span> Parametric Models</a></li>
+<li><a href="3-4-cox-ph.html#cox-ph"><span class="toc-section-number">3.4</span> Cox-PH</a></li>
 </ul></li>
 <li><a href="4-reference.html#reference"><span class="toc-section-number">4</span> Reference</a></li>
 </ul>
@@ -191,6 +199,12 @@ img {
 ## 2 N1             764
 ## 3 N2             515
 ## 4 N3             267</code></pre>
+<p>Since the <code>grade</code> variable in our dataset is a numeric variable whereas we actually want to treat it as a factor, we do the following:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">rotterdam &lt;-<span class="st"> </span>rotterdam <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">grade =</span> <span class="kw">as.factor</span>(grade))</a></code></pre></div>
+<p>As we were examining through the data, we found that upon the <code>chemo</code> variable and the <code>hormon</code> variable, there are instances where patients gets both therapy or neither. So in order to explore the relationship between treatment and survival, we introduce a new variable called <code>Treatment</code>, using the <code>chemo</code> and <code>hormon</code> variables.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">rotterdam &lt;-<span class="st"> </span>rotterdam <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Treatment =</span> <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="st">&quot;Chemo&quot;</span>, <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Hormon&quot;</span>, <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Both&quot;</span>, <span class="st">&quot;NaN/Other Treatment&quot;</span>))))</a></code></pre></div>
 </div>
 <p style="text-align: center;">
 <a href="2-1-loading-data.html"><button class="btn btn-default">Previous</button></a>

@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="2.3 Data visualizations | Rotterdam" />
+<meta property="og:title" content="Chapter4 Treatment vs. Survival Times | Rotterdam" />
 <meta property="og:type" content="book" />
 
 
@@ -23,9 +23,9 @@ MathJax.Hub.Config({
 </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
 
-<meta name="description" content="2.3 Data visualizations | Rotterdam">
+<meta name="description" content="Chapter4 Treatment vs. Survival Times | Rotterdam">
 
-<title>2.3 Data visualizations | Rotterdam</title>
+<title>Chapter4 Treatment vs. Survival Times | Rotterdam</title>
 
 <script src="libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -150,51 +150,29 @@ img {
 <li class="has-sub"><a href="2-data-exploration.html#data-exploration"><span class="toc-section-number">2</span> Data Exploration</a><ul>
 <li><a href="2-1-loading-data.html#loading-data"><span class="toc-section-number">2.1</span> Loading Data</a></li>
 <li><a href="2-2-data-wrangling.html#data-wrangling"><span class="toc-section-number">2.2</span> Data Wrangling</a></li>
-<li class="has-sub"><a href="2-3-data-visualizations.html#data-visualizations"><span class="toc-section-number">2.3</span> Data visualizations</a><ul>
-<li><a href="2-3-data-visualizations.html#diagnositcs-vs.-survival-times"><span class="toc-section-number">2.3.1</span> Diagnositcs vs. Survival Times</a></li>
-<li><a href="2-3-data-visualizations.html#treatment-vs.-survival-times"><span class="toc-section-number">2.3.2</span> Treatment vs. Survival Times</a></li>
+<li><a href="2-3-data-visualizations.html#data-visualizations"><span class="toc-section-number">2.3</span> Data visualizations</a></li>
 </ul></li>
+<li><a href="3-diagnositcs-vs-survival-times.html#diagnositcs-vs.-survival-times"><span class="toc-section-number">3</span> Diagnositcs vs. Survival Times</a></li>
+<li><a href="4-treatment-vs-survival-times.html#treatment-vs.-survival-times"><span class="toc-section-number">4</span> Treatment vs. Survival Times</a></li>
+<li class="has-sub"><a href="5-survival.html#survival"><span class="toc-section-number">5</span> Survival</a><ul>
+<li><a href="5-1-loading-data-1.html#loading-data-1"><span class="toc-section-number">5.1</span> Loading Data</a></li>
+<li class="has-sub"><a href="5-2-kaplan-miere.html#kaplan-miere"><span class="toc-section-number">5.2</span> Kaplan-Miere</a><ul>
+<li><a href="5-2-kaplan-miere.html#size-vs.-survival-times"><span class="toc-section-number">5.2.1</span> <code>size</code> vs. Survival Times</a></li>
+<li><a href="5-2-kaplan-miere.html#nodes_level-vs.-survival-times"><span class="toc-section-number">5.2.2</span> <code>Nodes_level</code> vs. Survival Times</a></li>
+<li><a href="5-2-kaplan-miere.html#treatment-vs.-survival-times-1"><span class="toc-section-number">5.2.3</span> <code>Treatment</code> vs. Survival Times</a></li>
 </ul></li>
-<li class="has-sub"><a href="3-survival.html#survival"><span class="toc-section-number">3</span> Survival</a><ul>
-<li><a href="3-1-loading-data-1.html#loading-data-1"><span class="toc-section-number">3.1</span> Loading Data</a></li>
-<li class="has-sub"><a href="3-2-kaplan-miere.html#kaplan-miere"><span class="toc-section-number">3.2</span> Kaplan-Miere</a><ul>
-<li><a href="3-2-kaplan-miere.html#size-vs.-survival-times"><span class="toc-section-number">3.2.1</span> <code>size</code> vs. Survival Times</a></li>
-<li><a href="3-2-kaplan-miere.html#nodes_level-vs.-survival-times"><span class="toc-section-number">3.2.2</span> <code>Nodes_level</code> vs. Survival Times</a></li>
-<li><a href="3-2-kaplan-miere.html#treatment-vs.-survival-times-1"><span class="toc-section-number">3.2.3</span> <code>Treatment</code> vs. Survival Times</a></li>
+<li><a href="5-3-parametric-models.html#parametric-models"><span class="toc-section-number">5.3</span> Parametric Models</a></li>
+<li><a href="5-4-cox-ph.html#cox-ph"><span class="toc-section-number">5.4</span> Cox-PH</a></li>
 </ul></li>
-<li><a href="3-3-parametric-models.html#parametric-models"><span class="toc-section-number">3.3</span> Parametric Models</a></li>
-<li><a href="3-4-cox-ph.html#cox-ph"><span class="toc-section-number">3.4</span> Cox-PH</a></li>
-</ul></li>
-<li><a href="4-reference.html#reference"><span class="toc-section-number">4</span> Reference</a></li>
+<li><a href="6-reference.html#reference"><span class="toc-section-number">6</span> Reference</a></li>
 </ul>
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="data-visualizations" class="section level2">
-<h2><span class="header-section-number">2.3</span> Data visualizations</h2>
-<div id="diagnositcs-vs.-survival-times" class="section level3">
-<h3><span class="header-section-number">2.3.1</span> Diagnositcs vs. Survival Times</h3>
-<p><code>size</code> vs. <code>dtime</code></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> size, <span class="dt">y =</span> dtime, <span class="dt">fill =</span> size)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb8-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
-<p><img src="Rotterdam_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<p><code>size</code> vs. <code>rtime</code></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> size, <span class="dt">y =</span> rtime, <span class="dt">fill =</span> size)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
-<p><img src="Rotterdam_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p><code>Nodes_level</code> vs. <code>dtime</code></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> Nodes_level, <span class="dt">y =</span> dtime, <span class="dt">fill =</span> Nodes_level)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb10-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
-<p><img src="Rotterdam_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<p><code>Nodes_level</code> vs. <code>rtime</code></p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> Nodes_level, <span class="dt">y =</span> rtime, <span class="dt">fill =</span> Nodes_level)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb11-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
-<p><img src="Rotterdam_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-</div>
-<div id="treatment-vs.-survival-times" class="section level3">
-<h3><span class="header-section-number">2.3.2</span> Treatment vs. Survival Times</h3>
+<div id="treatment-vs.-survival-times" class="section level1">
+<h1><span class="header-section-number">Chapter4</span> Treatment vs. Survival Times</h1>
 <p><code>Treatment</code> vs. <code>dtime</code></p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> Treatment, <span class="dt">y =</span> dtime, <span class="dt">fill =</span> Treatment)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb12-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
@@ -235,11 +213,9 @@ img {
 <pre><code>## [1] 0.2297116</code></pre>
 
 </div>
-</div>
-<!-- </div> -->
 <p style="text-align: center;">
-<a href="2-2-data-wrangling.html"><button class="btn btn-default">Previous</button></a>
-<a href="3-survival.html"><button class="btn btn-default">Next</button></a>
+<a href="3-diagnositcs-vs-survival-times.html"><button class="btn btn-default">Previous</button></a>
+<a href="5-survival.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>

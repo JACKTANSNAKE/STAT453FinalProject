@@ -5,14 +5,13 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="3.2 Kaplan-Miere | Rotterdam" />
+<meta property="og:title" content="Chapter8 Treatment vs. Survival Times | Rotterdam" />
 <meta property="og:type" content="book" />
 
 
 
 
 
-<meta name="author" content="JACK TAN, YIMING MIAO" />
 
 <meta name="date" content="2021-03-08" />
 
@@ -23,9 +22,9 @@ MathJax.Hub.Config({
 </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
 
-<meta name="description" content="3.2 Kaplan-Miere | Rotterdam">
+<meta name="description" content="Chapter8 Treatment vs. Survival Times | Rotterdam">
 
-<title>3.2 Kaplan-Miere | Rotterdam</title>
+<title>Chapter8 Treatment vs. Survival Times | Rotterdam</title>
 
 <script src="libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -150,54 +149,29 @@ img {
 <li class="has-sub"><a href="2-data-exploration.html#data-exploration"><span class="toc-section-number">2</span> Data Exploration</a><ul>
 <li><a href="2-1-loading-data.html#loading-data"><span class="toc-section-number">2.1</span> Loading Data</a></li>
 <li><a href="2-2-data-wrangling.html#data-wrangling"><span class="toc-section-number">2.2</span> Data Wrangling</a></li>
-<li class="has-sub"><a href="2-3-data-visualizations.html#data-visualizations"><span class="toc-section-number">2.3</span> Data visualizations</a><ul>
-<li><a href="2-3-data-visualizations.html#diagnositcs-vs.-survival-times"><span class="toc-section-number">2.3.1</span> Diagnositcs vs. Survival Times</a></li>
-<li><a href="2-3-data-visualizations.html#treatment-vs.-survival-times"><span class="toc-section-number">2.3.2</span> Treatment vs. Survival Times</a></li>
+<li><a href="2-3-data-visualizations.html#data-visualizations"><span class="toc-section-number">2.3</span> Data visualizations</a></li>
 </ul></li>
+<li><a href="3-diagnositcs-vs-survival-times.html#diagnositcs-vs.-survival-times"><span class="toc-section-number">3</span> Diagnositcs vs. Survival Times</a></li>
+<li><a href="4-treatment-vs-survival-times.html#treatment-vs.-survival-times"><span class="toc-section-number">4</span> Treatment vs. Survival Times</a></li>
+<li class="has-sub"><a href="5-survival.html#survival"><span class="toc-section-number">5</span> Survival</a><ul>
+<li><a href="5-1-loading-data-1.html#loading-data-1"><span class="toc-section-number">5.1</span> Loading Data</a></li>
+<li><a href="5-2-kaplan-miere.html#kaplan-miere"><span class="toc-section-number">5.2</span> Kaplan-Miere</a></li>
 </ul></li>
-<li class="has-sub"><a href="3-survival.html#survival"><span class="toc-section-number">3</span> Survival</a><ul>
-<li><a href="3-1-loading-data-1.html#loading-data-1"><span class="toc-section-number">3.1</span> Loading Data</a></li>
-<li class="has-sub"><a href="3-2-kaplan-miere.html#kaplan-miere"><span class="toc-section-number">3.2</span> Kaplan-Miere</a><ul>
-<li><a href="3-2-kaplan-miere.html#size-vs.-survival-times"><span class="toc-section-number">3.2.1</span> <code>size</code> vs. Survival Times</a></li>
-<li><a href="3-2-kaplan-miere.html#nodes_level-vs.-survival-times"><span class="toc-section-number">3.2.2</span> <code>Nodes_level</code> vs. Survival Times</a></li>
-<li><a href="3-2-kaplan-miere.html#treatment-vs.-survival-times-1"><span class="toc-section-number">3.2.3</span> <code>Treatment</code> vs. Survival Times</a></li>
+<li><a href="6-size-vs-survival-times.html#size-vs.-survival-times"><span class="toc-section-number">6</span> <code>size</code> vs. Survival Times</a></li>
+<li><a href="7-nodes-level-vs-survival-times.html#nodes_level-vs.-survival-times"><span class="toc-section-number">7</span> <code>Nodes_level</code> vs. Survival Times</a></li>
+<li class="has-sub"><a href="8-treatment-vs-survival-times-1.html#treatment-vs.-survival-times-1"><span class="toc-section-number">8</span> <code>Treatment</code> vs. Survival Times</a><ul>
+<li><a href="8-1-parametric-models.html#parametric-models"><span class="toc-section-number">8.1</span> Parametric Models</a></li>
+<li><a href="8-2-cox-ph.html#cox-ph"><span class="toc-section-number">8.2</span> Cox-PH</a></li>
 </ul></li>
-<li><a href="3-3-parametric-models.html#parametric-models"><span class="toc-section-number">3.3</span> Parametric Models</a></li>
-<li><a href="3-4-cox-ph.html#cox-ph"><span class="toc-section-number">3.4</span> Cox-PH</a></li>
-</ul></li>
-<li><a href="4-reference.html#reference"><span class="toc-section-number">4</span> Reference</a></li>
+<li><a href="9-reference.html#reference"><span class="toc-section-number">9</span> Reference</a></li>
 </ul>
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="kaplan-miere" class="section level2">
-<h2><span class="header-section-number">3.2</span> Kaplan-Miere</h2>
-<div id="size-vs.-survival-times" class="section level3">
-<h3><span class="header-section-number">3.2.1</span> <code>size</code> vs. Survival Times</h3>
-<p><code>size</code> vs. <code>dtime</code></p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1">KM_None_Death &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>size, <span class="dt">data =</span> rotterdam)</a>
-<a class="sourceLine" id="cb25-2" title="2"><span class="kw">plot</span>(KM_None_Death, <span class="dt">conf.type =</span> <span class="st">&quot;plain&quot;</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>,<span class="st">&quot;red&quot;</span>,<span class="st">&quot;purple&quot;</span>), <span class="dt">xlab=</span><span class="st">&quot;Days&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Survival&quot;</span>, <span class="dt">lty =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)</a></code></pre></div>
-<p><img src="Rotterdam_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
-<p><code>size</code> vs. <code>rtime</code></p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">KM_None_Recur &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span>size, <span class="dt">data =</span> rotterdam)</a>
-<a class="sourceLine" id="cb26-2" title="2"><span class="kw">plot</span>(KM_None_Recur, <span class="dt">conf.type =</span> <span class="st">&quot;plain&quot;</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>,<span class="st">&quot;red&quot;</span>,<span class="st">&quot;purple&quot;</span>), <span class="dt">xlab=</span><span class="st">&quot;Days&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Survival&quot;</span>, <span class="dt">lty =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)</a></code></pre></div>
-<p><img src="Rotterdam_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
-</div>
-<div id="nodes_level-vs.-survival-times" class="section level3">
-<h3><span class="header-section-number">3.2.2</span> <code>Nodes_level</code> vs. Survival Times</h3>
-<p><code>size</code> vs. <code>dtime</code></p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1">KM_None_Death &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>Nodes_level, <span class="dt">data =</span> rotterdam)</a>
-<a class="sourceLine" id="cb27-2" title="2"><span class="kw">plot</span>(KM_None_Death, <span class="dt">conf.type =</span> <span class="st">&quot;plain&quot;</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>,<span class="st">&quot;red&quot;</span>,<span class="st">&quot;purple&quot;</span>,<span class="st">&quot;green&quot;</span>), <span class="dt">xlab=</span><span class="st">&quot;Days&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Survival&quot;</span>, <span class="dt">lty =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>)</a></code></pre></div>
-<p><img src="Rotterdam_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
-<p><code>size</code> vs. <code>rtime</code></p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1">KM_None_Recur &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span>Nodes_level, <span class="dt">data =</span> rotterdam)</a>
-<a class="sourceLine" id="cb28-2" title="2"><span class="kw">plot</span>(KM_None_Recur, <span class="dt">conf.type =</span> <span class="st">&quot;plain&quot;</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>,<span class="st">&quot;red&quot;</span>,<span class="st">&quot;purple&quot;</span>, <span class="st">&quot;green&quot;</span>), <span class="dt">xlab=</span><span class="st">&quot;Days&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Survival&quot;</span>, <span class="dt">lty =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>)</a></code></pre></div>
-<p><img src="Rotterdam_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
-</div>
-<div id="treatment-vs.-survival-times-1" class="section level3">
-<h3><span class="header-section-number">3.2.3</span> <code>Treatment</code> vs. Survival Times</h3>
+<div id="treatment-vs.-survival-times-1" class="section level1">
+<h1><span class="header-section-number">Chapter8</span> <code>Treatment</code> vs. Survival Times</h1>
 <p><code>Treatment</code> vs. <code>dtime</code></p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1">KM_Treatment_Death &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>Treatment, <span class="dt">data =</span> rotterdam)</a>
 <a class="sourceLine" id="cb29-2" title="2"><span class="kw">plot</span>(KM_Treatment_Death, <span class="dt">conf.int =</span> <span class="ot">FALSE</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;purple&quot;</span>, <span class="st">&quot;green&quot;</span>), <span class="dt">xlab=</span><span class="st">&quot;Days&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Survival&quot;</span>, <span class="dt">lty=</span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>)</a>
@@ -213,10 +187,9 @@ img {
 <a class="sourceLine" id="cb30-5" title="5">       <span class="dt">title=</span><span class="st">&quot;Treatment Group&quot;</span>, <span class="dt">text.font=</span><span class="dv">6</span>)</a></code></pre></div>
 <p><img src="Rotterdam_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
 </div>
-</div>
 <p style="text-align: center;">
-<a href="3-1-loading-data-1.html"><button class="btn btn-default">Previous</button></a>
-<a href="3-3-parametric-models.html"><button class="btn btn-default">Next</button></a>
+<a href="7-nodes-level-vs-survival-times.html"><button class="btn btn-default">Previous</button></a>
+<a href="8-1-parametric-models.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>

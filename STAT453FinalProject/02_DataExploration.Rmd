@@ -23,23 +23,23 @@ data(rotterdam)
 
 The data that we are going to use is called `rotterdam`, and it is a dataset that's pre-recorded in the survival package. According to the documentation of the package, the data are retrieved from the Rotterdam tumor bank, which include various anonymous information about patients with breast cancer. Below is a table of the variables in the dataset:
 
-Variable name         |     Description
+Variable name         |      Description
 -----------------     |     -------------------------------------------------------
-`pid`                 |     patient identifier
-`year`                |     year of cancer incidence
-`age`                 |     age
-`meno`                |     menopausal status (0= premenopausal, 1= postmenopausal)
-`size`                |     tumor size, a factor with levels `<=20`, `20-50`, `>50`
-`grade`               |     tumor grade
-`nodes`               |     number of positive lymph nodes
-`pgr`                 |     progesterone receptors (fmol/l)
-`er`                  |     estrogen receptors (fmol/l)
-`hormon`              |     hormonal treatment (0=no, 1=yes)
-`chemo`               |     chemotherapy
-`rtime`               |     days to recurrence or last follow-up
-`recur`               |     0= no recurrence, 1= recurrence
-`dtime`               |     days to death or last follow-up
-`death`               |     0= alive, 1= dead
+`pid`                 |      patient identifier
+`year`                |      year of cancer incidence
+`age`                 |      age
+`meno`                |      menopausal status (0= premenopausal, 1= postmenopausal)
+`size`                |      tumor size, a factor with levels `<=20`, `20-50`, `>50`
+`grade`               |      tumor grade
+`nodes`               |      number of positive lymph nodes
+`pgr`                 |      progesterone receptors (fmol/l)
+`er`                  |      estrogen receptors (fmol/l)
+`hormon`              |      hormonal treatment (0=no, 1=yes)
+`chemo`               |      chemotherapy
+`rtime`               |      days to recurrence or last follow-up
+`recur`               |      0= no recurrence, 1= recurrence
+`dtime`               |      days to death or last follow-up
+`death`               |      0= alive, 1= dead
 
 From the description above, we see that there are `size` which stands for the size of the tumor, `nodes` which stands for how many lymph nodes are test cancer positive, so we have 2 criterions out of the three suggested in the background info.
 
@@ -64,39 +64,11 @@ rotterdam %>%
   summarise(number = n(), .groups = 'drop')
 ```
 
+Since the `grade` variable in our dataset is a numeric variable whereas we actually want to treat it as a factor, we do the following:
 
-## Data visualizations
-
-`size` v.s. `grade`
 ```{r}
-ggplot(data = rotterdam, aes(x = as.factor(grade), fill = size)) +
-  geom_bar(alpha = 0.7)
-```
-
-`grade` v.s. `nodes`
-#```{r}
-ggplot(data = rotterdam, aes(x=as.factor(grade), y=nodes, fill=as.factor(grade))) +
-    geom_violin() +
-    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-    geom_jitter(color="black", size=0.4, alpha=0.9) +
-    theme_ipsum() +
-    theme(
-      legend.position="none",
-      plot.title = element_text(size=11)
-    )
-#```
-
-`size` v.s. `nodes`
-#```{r, warning = FALSE}
-ggplot(data = rotterdam, aes(x=size, y=nodes, fill=size)) +
-    geom_violin() +
-    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-    geom_jitter(color="black", size=0.4, alpha=0.9) +
-    theme_ipsum() +
-    theme(
-      legend.position="none",
-      plot.title = element_text(size=11)
-#    )
+rotterdam <- rotterdam %>%
+  mutate(grade = as.factor(grade))
 ```
 
 As we were examining through the data, we found that upon the `chemo` variable and the `hormon` variable, there are instances where patients gets both therapy or neither. So in order to explore the relationship between treatment and survival, we introduce a new variable called `Treatment`, using the `chemo` and `hormon` variables.
@@ -104,6 +76,48 @@ As we were examining through the data, we found that upon the `chemo` variable a
 ```{r}
 rotterdam <- rotterdam %>%
   mutate(Treatment = ifelse(chemo == 1 & hormon == 0, "Chemo", ifelse(chemo == 0 & hormon == 1, "Hormon", ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment"))))
+```
+
+## Data visualizations
+
+### Diagnostics vs. Survival Times
+
+`size` vs. `dtime`
+```{r}
+ggplot(data = rotterdam, aes(x = size, y = dtime, fill = size)) +
+  geom_violin(alpha = 0.7)
+```
+
+`size` vs. `rtime`
+```{r}
+ggplot(data = rotterdam, aes(x = size, y = rtime, fill = size)) +
+  geom_violin(alpha = 0.7)
+```
+
+`Nodes_level` vs. `dtime`
+```{r}
+ggplot(data = rotterdam, aes(x = Nodes_level, y = dtime, fill = Nodes_level)) +
+  geom_violin(alpha = 0.7)
+```
+
+`Nodes_level` vs. `rtime`
+```{r}
+ggplot(data = rotterdam, aes(x = Nodes_level, y = rtime, fill = Nodes_level)) +
+  geom_violin(alpha = 0.7)
+```
+
+### Treatment vs. Survival Times
+
+`Treatment` vs. `dtime`
+```{r}
+ggplot(data = rotterdam, aes(x = Treatment, y = dtime, fill = Treatment)) +
+  geom_violin(alpha = 0.7)
+```
+
+`Treatment` vs. `rtime`
+```{r}
+ggplot(data = rotterdam, aes(x = Treatment, y = rtime, fill = Treatment)) +
+  geom_violin(alpha = 0.7)
 ```
 
 A very important criterion in analysis about cancer is the 5-year survival rate. In order to examine that, we introduce a new variable called `5_year_survival`, which indicates 1 if a patients survival time is larger than 5 years and 0 vice versa.
@@ -141,46 +155,3 @@ rotterdam %>%
 
 685/(685 + 2297)
 ```
-
-```{r}
-ggplot(rotterdam, aes(x=age)) +
-  geom_histogram(color="white")
-```
-
-```{r}
-ggplot(rotterdam, aes(y=pgr, x=age)) + 
-    geom_point() 
-```
-
-```{r}
-ggplot(rotterdam, aes(y=er, x=age)) + 
-    geom_point() 
-```
-
-```{r}
-ggplot(rotterdam,aes(x=pgr,fill=Treatment)) +
-  geom_density(alpha = 0.5) +
-  scale_fill_manual(values = c("blue","purple", "red", "yellow"))
-```
-
-```{r}
-ggplot(rotterdam,aes(x=er,fill=Treatment)) +
-  geom_density(alpha = 0.5) +
-  scale_fill_manual(values = c("blue","purple", "red", "yellow"))
-```
-
-```{r}
-ggplot(rotterdam, aes(x=size, fill=Treatment))+
-  geom_bar(position = "fill")
-```
-
-```{r}
-ggplot(rotterdam, aes(x=grade, fill=Treatment))+
-  geom_bar(position = "fill")
-```
-
-```{r}
-ggplot(rotterdam, aes(x=age, fill=Treatment))+
-  geom_bar(position = "fill")
-```
-

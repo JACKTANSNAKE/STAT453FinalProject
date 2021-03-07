@@ -1,6 +1,6 @@
 ---
 title: "Rotterdam"
-author: "JACKTANSNAKE"
+author: "JACK TAN, YIMING MIAO"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: 
@@ -16,7 +16,7 @@ According to World Health Organization$*$, Cancer is a leading cause of death wo
 
 ## Some Background Information
 
-For doctors to be able to assess the severity and different types of breast cancer, researchers have come up with a diagnosing system called the TNM$*$ system that is widely used in the diagnostics of breast cancer:
+For doctors to be able to assess the severity and different types of breast cancer, researchers have come up with a diagnosing system called the TNM$*$ Staging system that is widely used in the diagnostics of breast cancer:
 
 **Tumor(T)**: How large is the primary tumor in the breast? 
 
