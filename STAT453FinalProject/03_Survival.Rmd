@@ -34,12 +34,18 @@ rotterdam <- rotterdam %>%
 ```{r}
 KM_None_Death <- survfit(Surv(dtime, death) ~ size, data = rotterdam)
 plot(KM_None_Death, conf.type = "plain", col = c("blue","red","purple"), xlab="Days", ylab="Survival", lty = 1:3)
+legend(6000, 1, legend=c("<=20", "20-50", ">50"),
+       col=c("blue", "red", "purple"), lty=1:3, cex=0.8,
+       title="Tumor Size", text.font=6)
 ```
 
 `size` vs. `rtime`
 ```{r}
 KM_None_Recur <- survfit(Surv(rtime, recur) ~ size, data = rotterdam)
 plot(KM_None_Recur, conf.type = "plain", col = c("blue","red","purple"), xlab="Days", ylab="Survival", lty = 1:3)
+legend(6000, 1, legend=c("<=20", "20-50", ">50"),
+       col=c("blue", "red", "purple"), lty=1:3, cex=0.8,
+       title="Tumor Size", text.font=6)
 ```
 
 ### `Nodes_level` vs. Survival Times
@@ -48,12 +54,18 @@ plot(KM_None_Recur, conf.type = "plain", col = c("blue","red","purple"), xlab="D
 ```{r}
 KM_None_Death <- survfit(Surv(dtime, death) ~ Nodes_level, data = rotterdam)
 plot(KM_None_Death, conf.type = "plain", col = c("blue","red","purple","green"), xlab="Days", ylab="Survival", lty = 1:4)
+legend(5000, 1, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
+       col=c("blue", "red", "purple", "green"), lty=1:4, cex=0.8,
+       title="Treatment Group", text.font=6)
 ```
 
 `size` vs. `rtime`
 ```{r}
 KM_None_Recur <- survfit(Surv(rtime, recur) ~ Nodes_level, data = rotterdam)
-plot(KM_None_Recur, conf.type = "plain", col = c("blue","red","purple", "green"), xlab="Days", ylab="Survival", lty = 1:4)
+plot(KM_None_Recur, conf.type = "plain", col = c("blue","red","purple","green"), xlab="Days", ylab="Survival", lty = 1:4)
+legend(5000, 1, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
+       col=c("blue", "red", "purple", "green"), lty=1:4, cex=0.8,
+       title="Treatment Group", text.font=6)
 ```
 
 ### `Treatment` vs. Survival Times
@@ -76,7 +88,9 @@ legend(1, 0.4, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
        title="Treatment Group", text.font=6)
 ```
 
-## Parametric Models 
+## Parametric Models
+
+In order to fit a parametric model for the data, we have to first determine which parametric assumption would be suitable. We will use the Cox-Snell residual plot to evaluate. We will check for diagnostics vs. `dtime` & `rtime` separately, `Treatment` vs. `dtime` & `rtime` separately and finally diagnostics + `Treatment` vs. `dtime` & `rtime`.
 
 ```{r}
 ### Introduce the CoxSnell residuals for parametric model assessment
@@ -91,128 +105,85 @@ abline(0,1,col='red')
 }
 ```
 
-### Diagnostics vs. Survival Times
+### Diagnostics vs. Death Times
 
 Exponential model:
 ```{r}
-DexpFactoredNodes <- survreg(Surv(dtime, death) ~ size + Nodes_level, dist='exponential', data=rotterdam)
-DexpNumericNodes <- survreg(Surv(dtime, death) ~ size + nodes, dist='exponential', data=rotterdam)
-DexpFactoredNodes
-DexpNumericNodes
-```
-
-```{r}
-CSFactored = -log(1 - pexp(rotterdam$dtime, 1/exp(9.4580834-0.4079558*ifelse(rotterdam$size=="20-50",1,0)-0.7156137*ifelse(rotterdam$size==">50",1,0)-0.5001880*ifelse(rotterdam$Nodes_level=="N1",1,0)-0.9946036*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.3062361*ifelse(rotterdam$Nodes_level=="N3",1,0))))
+DexpNodes <- survreg(Surv(dtime, death) ~ size + Nodes_level, dist='exponential', data=rotterdam)
+DexpNodes
+CSFactored <- -log(1 - pexp(rotterdam$dtime, 1/exp(9.4580834-0.4079558*ifelse(rotterdam$size=="20-50",1,0)-0.7156137*ifelse(rotterdam$size==">50",1,0)-0.5001880*ifelse(rotterdam$Nodes_level=="N1",1,0)-0.9946036*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.3062361*ifelse(rotterdam$Nodes_level=="N3",1,0))))
 # Make appropriate graph using CoxSnell function
 CoxSnell(CSFactored, rotterdam$death)
-
-CSNumeric = -log(1 - pexp(rotterdam$dtime, 1/exp(9.25807238-0.48559190*ifelse(rotterdam$size=="20-50",1,0)-0.87914002*ifelse(rotterdam$size==">50",1,0)-0.07094178*rotterdam$nodes)))
-# Make appropriate graph using CoxSnell function
-CoxSnell(CSNumeric, rotterdam$death)
 ```
+
+From the graph above, we could see that an Exponential model is not adequate. 
 
 Weibull model:
 ```{r}
-DweibullFactoredNodes <- survreg(Surv(dtime, death) ~ size + Nodes_level, dist='weibull', data=rotterdam)
-DweibullNumericNodes <- survreg(Surv(dtime, death) ~ size + nodes, dist='weibull', data=rotterdam)
-DweibullFactoredNodes
-DweibullNumericNodes
-```
-
-```{r}
-CSFactored = -log(1 - pweibull(rotterdam$dtime, 1/0.7423267, exp(9.1139316-0.3138368*ifelse(rotterdam$size=="20-50",1,0)-0.5771036*ifelse(rotterdam$size==">50",1,0)-0.3840287*ifelse(rotterdam$Nodes_level=="N1",1,0)-0.7862627*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.0530855*ifelse(rotterdam$Nodes_level=="N3",1,0))))
+DweibullNodes <- survreg(Surv(dtime, death) ~ size + Nodes_level, dist='weibull', data=rotterdam)
+DweibullNodes
+CSFactored <- -log(1 - pweibull(rotterdam$dtime, 1/0.7423267, exp(9.1139316-0.3138368*ifelse(rotterdam$size=="20-50",1,0)-0.5771036*ifelse(rotterdam$size==">50",1,0)-0.3840287*ifelse(rotterdam$Nodes_level=="N1",1,0)-0.7862627*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.0530855*ifelse(rotterdam$Nodes_level=="N3",1,0))))
 # Make appropriate graph using CoxSnell function
 CoxSnell(CSFactored, rotterdam$death)
-
-CSNumeric = -log(1 - pweibull(rotterdam$dtime, 1/0.748139, exp(8.96551068-0.37327053*ifelse(rotterdam$size=="20-50",1,0)-0.71478411*ifelse(rotterdam$size==">50",1,0)-0.05733795*rotterdam$nodes)))
-# Make appropriate graph using CoxSnell function
-CoxSnell(CSNumeric, rotterdam$death)
 ```
+
+From the graph, the Weibull model looks better than the Exponential model, but it is still far from adequate.
 
 Log-normal model:
 ```{r}
-DlnormFactoredNodes <- survreg(Surv(dtime, death) ~ size + Nodes_level, dist='lognormal', data=rotterdam)
-DlnormNumericNodes <- survreg(Surv(dtime, death) ~ size + nodes, dist='lognormal', data=rotterdam)
-DlnormFactoredNodes
-DlnormNumericNodes
-```
-
-```{r}
-CSFactored = -log(1 - plnorm(rotterdam$dtime,   8.8734197-0.3292566*ifelse(rotterdam$size=="20-50",1,0)-0.6043081*ifelse(rotterdam$size==">50",1,0) -0.4020603*ifelse(rotterdam$Nodes_level=="N1",1,0)-0.8575354*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.1966395*ifelse(rotterdam$Nodes_level=="N3",1,0), 1.070683))
+DlnormNodes <- survreg(Surv(dtime, death) ~ size + Nodes_level, dist='lognormal', data=rotterdam)
+DlnormNodes
+CSFactored <- -log(1 - plnorm(rotterdam$dtime,   8.8734197-0.3292566*ifelse(rotterdam$size=="20-50",1,0)-0.6043081*ifelse(rotterdam$size==">50",1,0) -0.4020603*ifelse(rotterdam$Nodes_level=="N1",1,0)-0.8575354*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.1966395*ifelse(rotterdam$Nodes_level=="N3",1,0), 1.070683))
 # Make appropriate graph using CoxSnell function
 CoxSnell(CSFactored, rotterdam$death)
-
-CSNumeric = -log(1 - plnorm(rotterdam$dtime, 8.75960765 - 0.38390034*ifelse(rotterdam$size=="20-50",1,0)-0.70016258*ifelse(rotterdam$size==">50",1,0) -0.07917648*rotterdam$nodes, 1.08368))
-
-CoxSnell(CSNumeric, rotterdam$death)
 ```
 
+Surprisingly, the Log-normal model seems to be perfect fit for the data and it is absolutely adequate.
+
 ### Diagnostics vs. Recurrence Times
+
+Next, we will be looking at the parametric assumptions over Diagnostics vs. Recurrence Times.
 
 Exponential model:
 ```{r}
 DexpFactoredNodes <- survreg(Surv(rtime, recur) ~ size + Nodes_level, dist='exponential', data=rotterdam)
-DexpNumericNodes <- survreg(Surv(rtime, recur) ~ size + nodes, dist='exponential', data=rotterdam)
 DexpFactoredNodes
-DexpNumericNodes
-```
-
-```{r}
-CSFactored = -log(1 - pexp(rotterdam$rtime, 1/exp(8.9222448-0.3234604*ifelse(rotterdam$size=="20-50",1,0)-0.5439809*ifelse(rotterdam$size==">50",1,0)-0.3714043*ifelse(rotterdam$Nodes_level=="N1",1,0)-0.9934901*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.4131380*ifelse(rotterdam$Nodes_level=="N3",1,0))))
+CSFactored <- -log(1 - pexp(rotterdam$rtime, 1/exp(8.9222448-0.3234604*ifelse(rotterdam$size=="20-50",1,0)-0.5439809*ifelse(rotterdam$size==">50",1,0)-0.3714043*ifelse(rotterdam$Nodes_level=="N1",1,0)-0.9934901*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.4131380*ifelse(rotterdam$Nodes_level=="N3",1,0))))
 # Make appropriate graph using CoxSnell function
 CoxSnell(CSFactored, rotterdam$recur)
-
-CSNumeric = -log(1 - pexp(rotterdam$rtime, 1/exp(8.78007732 -0.39027711*ifelse(rotterdam$size=="20-50",1,0)-0.68814113*ifelse(rotterdam$size==">50",1,0)-0.08100318*rotterdam$nodes)))
-# Make appropriate graph using CoxSnell function
-CoxSnell(CSNumeric, rotterdam$recur)
 ```
+
+Same as the graph in `dtime`, Exponential model does not seem to be adequate.
 
 Weibull model:
 ```{r}
 DweibullFactoredNodes <- survreg(Surv(rtime, recur) ~ size + Nodes_level, dist='weibull', data=rotterdam)
-DweibullNumericNodes <- survreg(Surv(rtime, recur) ~ size + nodes, dist='weibull', data=rotterdam)
 DweibullFactoredNodes
-DweibullNumericNodes
-```
-
-```{r}
-CSFactored = -log(1 - pweibull(rotterdam$rtime, 1/1.008247, exp(8.9297745-0.3256748*ifelse(rotterdam$size=="20-50",1,0)-0.5464318*ifelse(rotterdam$size==">50",1,0)-0.3737779*ifelse(rotterdam$Nodes_level=="N1",1,0)-0.9991092*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.4204576*ifelse(rotterdam$Nodes_level=="N3",1,0))))
+CSFactored <- -log(1 - pweibull(rotterdam$rtime, 1/1.008247, exp(8.9297745-0.3256748*ifelse(rotterdam$size=="20-50",1,0)-0.5464318*ifelse(rotterdam$size==">50",1,0)-0.3737779*ifelse(rotterdam$Nodes_level=="N1",1,0)-0.9991092*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.4204576*ifelse(rotterdam$Nodes_level=="N3",1,0))))
 # Make appropriate graph using CoxSnell function
 CoxSnell(CSFactored, rotterdam$recur)
-
-CSNumeric = -log(1 - pweibull(rotterdam$rtime, 1/1.018449, exp(8.79497805-0.39619564*ifelse(rotterdam$size=="20-50",1,0)-0.69507535*ifelse(rotterdam$size==">50",1,0)-0.08199745*rotterdam$nodes)))
-# Make appropriate graph using CoxSnell function
-CoxSnell(CSNumeric, rotterdam$recur)
 ```
+
+Again, the Weibull model has a nicer Cox-Snell residual plot than Exponential model, but it's still far from adequate.
 
 Log-normal model:
 ```{r}
 DlnormFactoredNodes <- survreg(Surv(rtime, recur) ~ size + Nodes_level, dist='lognormal', data=rotterdam)
-DlnormNumericNodes <- survreg(Surv(rtime, recur) ~ size + nodes, dist='lognormal', data=rotterdam)
 DlnormFactoredNodes
-DlnormNumericNodes
-```
-
-```{r}
-CSFactored = -log(1 - plnorm(rotterdam$rtime,   8.5287301-0.3990732*ifelse(rotterdam$size=="20-50",1,0)-0.6058651*ifelse(rotterdam$size==">50",1,0) -0.3437357*ifelse(rotterdam$Nodes_level=="N1",1,0)-0.9944863*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.4794706*ifelse(rotterdam$Nodes_level=="N3",1,0), 1.335044))
+CSFactored <- -log(1 - plnorm(rotterdam$rtime,   8.5287301-0.3990732*ifelse(rotterdam$size=="20-50",1,0)-0.6058651*ifelse(rotterdam$size==">50",1,0) -0.3437357*ifelse(rotterdam$Nodes_level=="N1",1,0)-0.9944863*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.4794706*ifelse(rotterdam$Nodes_level=="N3",1,0), 1.335044))
 # Make appropriate graph using CoxSnell function
 CoxSnell(CSFactored, rotterdam$recur)
-
-CSNumeric = -log(1 - plnorm(rotterdam$rtime, 8.4375379 - 0.4427015*ifelse(rotterdam$size=="20-50",1,0)-0.6916485*ifelse(rotterdam$size==">50",1,0) -0.1014937*rotterdam$nodes, 1.08368))
-
-CoxSnell(CSNumeric, rotterdam$recur)
 ```
 
-### Treatment vs. Survival Times
+Just like our conclusion in vs. `dtime`, the Log-normal is adequate!
+
+### Treatment vs. Death Times
 
 Exponential model:
 ```{r}
 Dexp <- survreg(Surv(dtime, death) ~ Treatment, dist='exponential', data=rotterdam)
 Dexp
-```
-
-```{r}
-CS = -log(1 - pexp(rotterdam$dtime, 1/exp(9.2675474-0.6178274*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.9740923*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0)-0.4801527*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0))))
+CS <- -log(1 - pexp(rotterdam$dtime, 1/exp(9.2675474-0.6178274*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.9740923*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0)-0.4801527*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0))))
 # Make appropriate graph using CoxSnell function
 CoxSnell(CS, rotterdam$death)
 ```
@@ -221,10 +192,7 @@ Weibull model:
 ```{r}
 Dweibull <- survreg(Surv(dtime, death) ~ Treatment, dist='weibull', data=rotterdam)
 Dweibull
-```
-
-```{r}
-CS = -log(1 - pweibull(rotterdam$dtime, 1/0.7853686, exp(9.0256920-0.5087149*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.8529757*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0)-0.3952678*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0))))
+CS <- -log(1 - pweibull(rotterdam$dtime, 1/0.7853686, exp(9.0256920-0.5087149*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.8529757*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0)-0.3952678*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0))))
 # Make appropriate graph using CoxSnell function
 CoxSnell(CS, rotterdam$death)
 ```
@@ -233,24 +201,18 @@ Log-normal model:
 ```{r}
 Dlnorm <- survreg(Surv(dtime, death) ~ Treatment, dist='lognormal', data=rotterdam)
 Dlnorm
-```
-
-```{r}
-CS = -log(1 - plnorm(rotterdam$dtime,   8.7552607-0.4988799*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.8119019*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0) -0.3782626*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0), 1.193984))
+CS <- -log(1 - plnorm(rotterdam$dtime,   8.7552607-0.4988799*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.8119019*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0) -0.3782626*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0), 1.193984))
 # Make appropriate graph using CoxSnell function
 CoxSnell(CS, rotterdam$death)
 ```
 
-### Treatment vs. Survival Times
+### Treatment vs. Recurrence Times
 
 Exponential model:
 ```{r}
 Dexp <- survreg(Surv(rtime, recur) ~ Treatment, dist='exponential', data=rotterdam)
 Dexp
-```
-
-```{r}
-CS = -log(1 - pexp(rotterdam$rtime, 1/exp(8.6387571-0.4806280*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.6736760*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0)-0.2245649*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0))))
+CS <- -log(1 - pexp(rotterdam$rtime, 1/exp(8.6387571-0.4806280*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.6736760*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0)-0.2245649*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0))))
 # Make appropriate graph using CoxSnell function
 CoxSnell(CS, rotterdam$recur)
 ```
@@ -259,10 +221,7 @@ Weibull model:
 ```{r}
 Dweibull <- survreg(Surv(rtime, recur) ~ Treatment, dist='weibull', data=rotterdam)
 Dweibull
-```
-
-```{r}
-CS = -log(1 - pweibull(rotterdam$dtime, 1/1.081885, exp(8.6886491-0.5055531*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.6910078*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0)-0.2332029*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0))))
+CS <- -log(1 - pweibull(rotterdam$dtime, 1/1.081885, exp(8.6886491-0.5055531*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.6910078*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0)-0.2332029*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0))))
 # Make appropriate graph using CoxSnell function
 CoxSnell(CS, rotterdam$recur)
 ```
@@ -271,14 +230,118 @@ Log-normal model:
 ```{r}
 Dlnorm <- survreg(Surv(rtime, recur) ~ Treatment, dist='lognormal', data=rotterdam)
 Dlnorm
-```
-
-```{r}
-CS = -log(1 - plnorm(rotterdam$rtime,   8.3190087-0.5373331*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.6984793*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0) -0.3175542*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0), 1.490703))
+CS <- -log(1 - plnorm(rotterdam$rtime,   8.3190087-0.5373331*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.6984793*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0) -0.3175542*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0), 1.490703))
 # Make appropriate graph using CoxSnell function
 CoxSnell(CS, rotterdam$recur)
 ```
 
+Just like our previous check with `size` + `Nodes_level`, Log-normal is still the most adequate parametric model when fitting `Treatment` vs. `dtime`/`rtime`.
+
+### Diagnostics + `Treatment` vs. `dtime`
+
+Next we will start examining a more complex model which includes both diagnostics and `Treatment` as covariates.
+
+Exponential model:
+```{r}
+Dexp <- survreg(Surv(dtime, death) ~ Treatment + size + Nodes_level, dist='exponential', data=rotterdam)
+Dexp
+CS <- -log(1 - pexp(rotterdam$dtime, 1/exp(10.4584614-0.5590890 *ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.7263019*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0)-1.0100742*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0)-0.3874820*ifelse(rotterdam$size=="20-50",1,0)-0.6952851*ifelse(rotterdam$size==">50",1,0)-0.7583715*ifelse(rotterdam$Nodes_level=="N1",1,0)-1.1841161*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.4957143*ifelse(rotterdam$Nodes_level=="N3",1,0))))
+# Make appropriate graph using CoxSnell function
+CoxSnell(CS, rotterdam$death)
+```
+
+Weibull model:
+```{r}
+Dweibull <- survreg(Surv(dtime, death) ~ Treatment + size + Nodes_level, dist='weibull', data=rotterdam)
+Dweibull
+CS <- -log(1 - pweibull(rotterdam$dtime, 1/0.7390854, exp(9.8870973-0.4335618*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.6246482*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0)-0.7843056 *ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0)-0.2982733*ifelse(rotterdam$size=="20-50",1,0)-0.5597995*ifelse(rotterdam$size==">50",1,0)-0.5743763*ifelse(rotterdam$Nodes_level=="N1",1,0)-0.9214024 *ifelse(rotterdam$Nodes_level=="N2",1,0)-1.1833002*ifelse(rotterdam$Nodes_level=="N3",1,0))))
+# Make appropriate graph using CoxSnell function
+CoxSnell(CS, rotterdam$death)
+```
+
+Log-normal model:
+```{r}
+Dlnorm <- survreg(Surv(dtime, death) ~ Treatment + size + Nodes_level, dist='lognormal', data=rotterdam)
+Dlnorm
+CS <- -log(1 - plnorm(rotterdam$dtime, 9.7181171-0.4527864*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.5621002*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0) -0.8597789*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0)-0.3097733*ifelse(rotterdam$size=="20-50",1,0)-0.5811460*ifelse(rotterdam$size==">50",1,0)-0.6401640*ifelse(rotterdam$Nodes_level=="N1",1,0)-1.0327799 *ifelse(rotterdam$Nodes_level=="N2",1,0)-1.3877558*ifelse(rotterdam$Nodes_level=="N3",1,0), 1.062871))
+# Make appropriate graph using CoxSnell function
+CoxSnell(CS, rotterdam$death)
+```
+
+### Diagnostics + `Treatments` vs. `rtime`
+
+Exponential model:
+```{r}
+Dexp <- survreg(Surv(rtime, recur) ~ Treatment + size + Nodes_level, dist='exponential', data=rotterdam)
+Dexp
+CS <- -log(1 - pexp(rotterdam$dtime, 1/exp(9.6586452-0.4508196 *ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.4030008*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0)-0.7416065*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0)-0.3126913*ifelse(rotterdam$size=="20-50",1,0)-0.5198205*ifelse(rotterdam$size==">50",1,0)-0.5741166*ifelse(rotterdam$Nodes_level=="N1",1,0)-1.1668417*ifelse(rotterdam$Nodes_level=="N2",1,0)-1.5853858*ifelse(rotterdam$Nodes_level=="N3",1,0))))
+# Make appropriate graph using CoxSnell function
+CoxSnell(CS, rotterdam$death)
+```
+
+Weibull model:
+```{r}
+Dweibull <- survreg(Surv(rtime, recur) ~ Treatment + size + Nodes_level, dist='weibull', data=rotterdam)
+Dweibull
+CS <- -log(1 - pweibull(rotterdam$dtime, 1/0.7390854, exp(9.6672092-0.4525829*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.4032670*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0)-0.7445016*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0)-0.3142949*ifelse(rotterdam$size=="20-50",1,0)-0.5216430*ifelse(rotterdam$size==">50",1,0)-0.5768905 *ifelse(rotterdam$Nodes_level=="N1",1,0)-1.1720004 *ifelse(rotterdam$Nodes_level=="N2",1,0)-1.5919074*ifelse(rotterdam$Nodes_level=="N3",1,0))))
+# Make appropriate graph using CoxSnell function
+CoxSnell(CS, rotterdam$death)
+```
+
+Log-normal model:
+```{r}
+Dlnorm <- survreg(Surv(rtime, recur) ~ Treatment + size + Nodes_level, dist='lognormal', data=rotterdam)
+Dlnorm
+CS <- -log(1 - plnorm(rotterdam$dtime, 9.3437867-0.4626187*ifelse(rotterdam$Treatment=="TreatmentChemo",1,0)-0.3725819*ifelse(rotterdam$Treatment=="TreatmentHormon",1,0) -0.8308498*ifelse(rotterdam$Treatment=="TreatmentNaN/Other Treatment",1,0)-0.3778943*ifelse(rotterdam$size=="20-50",1,0)-0.5825306*ifelse(rotterdam$size==">50",1,0)-0.6024121*ifelse(rotterdam$Nodes_level=="N1",1,0)-1.2004698 *ifelse(rotterdam$Nodes_level=="N2",1,0)-1.7032972*ifelse(rotterdam$Nodes_level=="N3",1,0), 1.062871))
+# Make appropriate graph using CoxSnell function
+CoxSnell(CS, rotterdam$death)
+```
+
 ## Cox-PH
+
+```{r}
+KM = survfit(Surv(dtime, death) ~ Treatment, data = rotterdam)
+
+# Note the fun='cloglog' parameter:
+plot(KM , fun='cloglog', mark.time=FALSE, lty=1:4, col = c("blue", "red", "purple", "green"))
+legend(40, 0, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
+       col=c("blue", "red", "purple", "green"), lty=1:4, cex=0.8,
+       title="Treatment Group", text.font=6)
+```
+
+```{r}
+mTreatment = coxph(Surv(dtime, death) ~ Treatment, data=rotterdam)
+
+mTreatment
+plot(cox.zph(mTreatment))
+cox.zph(mTreatment)
+```
+
+```{r}
+KM = survfit(Surv(rtime, recur) ~ Treatment, data = rotterdam)
+
+# Note the fun='cloglog' parameter:
+plot(KM , fun='cloglog', mark.time=FALSE, lty=1:4, col = c("blue", "red", "purple", "green"))
+legend(40, 0, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
+       col=c("blue", "red", "purple", "green"), lty=1:4, cex=0.8,
+       title="Treatment Group", text.font=6)
+```
+
+```{r}
+mTreatment = coxph(Surv(rtime, recur) ~ Treatment, data=rotterdam)
+
+mTreatment
+plot(cox.zph(mTreatment))
+cox.zph(mTreatment)
+```
+
+```{r}
+mTreatment = coxph(Surv(rtime, recur) ~ Treatment + size + Nodes_level, data=rotterdam)
+
+mTreatment
+plot(cox.zph(mTreatment))
+cox.zph(mTreatment)
+```
+
 
 

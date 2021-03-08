@@ -1,0 +1,59 @@
+---
+title: "04_Regression"
+author: "JACKTANSNAKE"
+date: "2021/3/8"
+output: html_document
+---
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+library(survival)
+library(survminer)
+library(tidyverse)
+library(caret)
+library(hrbrthemes)
+library(viridis)
+library(ranger)
+```
+
+## Loading Data
+```{r}
+data(rotterdam)
+```
+
+```{r}
+# cross validation, stratified on status variable to ensure that  each group (here censored, dead)
+# is equally distributed over the cross-validation folds
+folds <- 2 # for <nfold> cross-validation
+cvIndex <- createFolds(factor(rotterdam$death), folds, returnTrain = T)
+```
+
+# 2 model, training
+```{r}
+# create some containers to store results
+# (not reasonable for big models, for big models you may want so store intermediate results on disk)
+container_model <- vector("list",length(cvIndex))
+container_pred <- container_model
+# run RSF with default params --------------------------------------------------
+# iterate through cv-folds
+for(i in 1:length(cvIndex)) {
+  
+  # define training / test data
+  train_data <- rotterdam[cvIndex[[i]],]
+  eval_data <- rotterdam[-cvIndex[[i]],]
+  
+  # train
+  rsf <- ranger(Surv(time = dtime, event = death) ~ ., data = train_data)
+  
+  # predict (on hold out test set)
+  pred <- predict(rsf, eval_data)
+  
+  # store results
+  container_model[[i]] <- rsf
+  container_pred[[i]] <- pred
+}
+```
+
+show some model summaries
+```{r}
+container_model
+```
