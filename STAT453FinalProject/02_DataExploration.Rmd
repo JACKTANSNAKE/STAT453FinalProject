@@ -24,7 +24,7 @@ data(rotterdam)
 The data that we are going to use is called `rotterdam`, and it is a dataset that's pre-recorded in the survival package. According to the documentation of the package, the data are retrieved from the Rotterdam tumor bank, which include various anonymous information about patients with breast cancer. Below is a table of the variables in the dataset:
 
 Variable name         |      Description
------------------     |     -------------------------------------------------------
+----------------------|---------------------------------------------------------
 `pid`                 |      patient identifier
 `year`                |      year of cancer incidence
 `age`                 |      age
@@ -78,7 +78,7 @@ rotterdam <- rotterdam %>%
   mutate(Treatment = ifelse(chemo == 1 & hormon == 0, "Chemo", ifelse(chemo == 0 & hormon == 1, "Hormon", ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment"))))
 ```
 
-## Data visualizations
+## Data visualizations and exploration
 
 ### Diagnostics vs. Survival Times
 
@@ -94,6 +94,8 @@ ggplot(data = rotterdam, aes(x = size, y = rtime, fill = size)) +
   geom_violin(alpha = 0.7)
 ```
 
+As we can see from the two plots above, tumor size could be an important factor that affects patients' survival time and recur time. For `size` smaller than 20, most of the patients are able to survive or encounter recurrence after roughly 3000 days. But for `size` 20-50 and >50, it's highly likely for breast cancer to recur in 500 days.
+
 `Nodes_level` vs. `dtime`
 ```{r}
 ggplot(data = rotterdam, aes(x = Nodes_level, y = dtime, fill = Nodes_level)) +
@@ -105,6 +107,8 @@ ggplot(data = rotterdam, aes(x = Nodes_level, y = dtime, fill = Nodes_level)) +
 ggplot(data = rotterdam, aes(x = Nodes_level, y = rtime, fill = Nodes_level)) +
   geom_violin(alpha = 0.7)
 ```
+
+Similarly, `nodes` is also a factor impacting the life of breast cancer patients. For patients with `Nodes_level` N2 and N3, a quite large proportion of them fail to survival more than 1000 days and encounter recurrence in less than 500 days.
 
 ### Treatment vs. Survival Times
 
@@ -119,6 +123,10 @@ ggplot(data = rotterdam, aes(x = Treatment, y = dtime, fill = Treatment)) +
 ggplot(data = rotterdam, aes(x = Treatment, y = rtime, fill = Treatment)) +
   geom_violin(alpha = 0.7)
 ```
+
+By examing the two plots above, it seems that `Treatment` would not affect patients survival time or recurrence that much. We can find that `chemo + hormon` is likely to be the one with best curative effect, that patients receiving both chemo and hormon therapy tend to have longer survival time and longer time to recurrence. And the effect of hormon therapy itself seems not that satisfying. 
+
+We also found a bi-model shape in `NaN/Other Traetment` group. This may because the two peaks correponds to no treatment and other treatment separately, but currently we don't more information investigating the true reason.
 
 A very important criterion in analysis about cancer is the 5-year survival rate. In order to examine that, we introduce a new variable called `5_year_survival`, which indicates 1 if a patients survival time is larger than 5 years and 0 vice versa.
 
@@ -155,3 +163,17 @@ rotterdam %>%
 
 685/(685 + 2297)
 ```
+
+We can find that the 5-year survival rate for breast cancer is just fine, and around 70% of patients are able to live more than 5 years. However, the 10-year survival rate is still disappointing given the current medical level, and only around 20% patients could live more than 10 years after diagnosis. 
+
+All above information reminds people, especially females, that screening does save lives. Get screening and diagnosis earlier could greatly help improving the quality of life in the future. 
+
+
+
+
+
+
+
+
+
+
