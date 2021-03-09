@@ -13,6 +13,7 @@ library(caret)
 library(hrbrthemes)
 library(viridis)
 library(ranger)
+library(randomForestSRC)
 ```
 
 ## Loading Data
@@ -57,3 +58,39 @@ show some model summaries
 ```{r}
 container_model
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+# Sample the data and create a training subset.
+train <- sample(1:nrow(rotterdam), round(nrow(rotterdam) * 0.80))
+# Train the model.
+rotterdam.grow <- rfsrc(Surv(dtime_Years, death) ~ size + nodes + Treatment, rotterdam[train, ], ntree = 100)
+# Test the model.
+rotterdam.pred <- predict(rotterdam.grow, rotterdam[-train , ])
+# Compare the results.
+print(rotterdam.grow)
+print(rotterdam.pred)
+```
+
+```{r}
+test_case = data.frame(age = 25, size = "20-50", Treatment = "Chemo", nodes = 5)
+predict(rotterdam.grow, test_case)
+```
+
+

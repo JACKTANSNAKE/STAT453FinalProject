@@ -75,7 +75,10 @@ As we were examining through the data, we found that upon the `chemo` variable a
 
 ```{r}
 rotterdam <- rotterdam %>%
-  mutate(Treatment = ifelse(chemo == 1 & hormon == 0, "Chemo", ifelse(chemo == 0 & hormon == 1, "Hormon", ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment"))))
+  mutate(Treatment = ifelse(chemo == 1 & hormon == 0, "Chemo",
+                     ifelse(chemo == 0 & hormon == 1, "Hormon", 
+                     ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment")))) %>% 
+  mutate(Treatment = as.factor(Treatment))
 ```
 
 ## Data visualizations and exploration
