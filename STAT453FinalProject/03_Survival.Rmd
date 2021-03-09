@@ -5,8 +5,6 @@ library(survival)
 library(survminer)
 library(tidyverse)
 library(caret)
-library(hrbrthemes)
-library(viridis)
 ```
 
 ## Loading Data
@@ -16,17 +14,66 @@ data(rotterdam)
 
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
 rotterdam <- rotterdam %>%
-  mutate(Treatment = ifelse(chemo == 1 & hormon == 0, "Chemo", ifelse(chemo == 0 & hormon == 1, "Hormon", ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment"))))
+  mutate(Treatment = ifelse(chemo == 1 & hormon == 0, "Chemo", 
+                     ifelse(chemo == 0 & hormon == 1, "Hormon", 
+                     ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment"))))
 rotterdam <- rotterdam %>% 
   mutate(Nodes_level = ifelse(nodes == 0, "N0", 
-                              ifelse(nodes >= 1 & nodes <= 3, "N1", 
-                                     ifelse(nodes >= 4 & nodes <= 9, "N2", 
-                                            ifelse(nodes >= 10, "N3", NaN)))))
+                       ifelse(nodes >= 1 & nodes <= 3, "N1", 
+                       ifelse(nodes >= 4 & nodes <= 9, "N2", 
+                       ifelse(nodes >= 10, "N3", NaN)))))
 rotterdam <- rotterdam %>%
   mutate(grade = as.factor(grade))
+rotterdam_recur <- rotterdam %>%
+  filter(recur == 1) %>%
+  mutate(drecurtime = dtime-rtime)
 ```
 
-## Kaplan-Miere
+## Kaplan-Miere estimator of the entire dataset
+
+Death Time
+```{r}
+KM <- survfit(Surv(dtime, death) ~ 1, data = rotterdam)
+plot(KM, conf.int = TRUE, col = "blue", xlab="Days", ylab="Survival")
+```
+
+```{r}
+mean(rotterdam$dtime)
+median(rotterdam$dtime)
+```
+
+The overall mean survival time till death for breast cancer is 2605 days, which is approximately 7 years. The overall median survival time till death for breast cancer is 2638 days, which is also approximately 7 years.
+
+Recurrence Time
+```{r}
+KM <- survfit(Surv(rtime, recur) ~ 1, data = rotterdam)
+plot(KM, conf.int = TRUE, col = "blue", xlab="Days", ylab="Survival")
+```
+
+```{r}
+mean(rotterdam$rtime)
+median(rotterdam$rtime)
+```
+
+The overall mean survival time till recurrence for breast cancer is 2097 days, which is approximately 6 years. The overall median survival time till recurrence for breast cancer is 1940 days, which is also approximately 5 years.
+
+```{r}
+KM <- survfit(Surv(drecurtime, death) ~ 1, data = rotterdam_recur)
+plot(KM, conf.int = TRUE, col = "blue", xlab="Days", ylab="Survival")
+```
+
+```{r}
+mean(rotterdam_recur$drecurtime)
+median(rotterdam_recur$drecurtime)
+```
+
+The overall mean survival time after rucurrence till death for breast cancer is 834 days, which is approximately a little more than 2 years. The overall median survival time after rucurrence till death for breast cancer is 625 days, which is approximately less than 2 years.
+
+Since a Kaplan-Miere estimator is unbiased, we could view the median as being very close to the true value of survival time. 
+
+## Kaplan-Miere estimator on different variables in `rotterdam`
+
+There are 16 variables in the `rotterdam` dataset. Of course we could have fit each variable with a KM estimator, but it would be meaningless to do them all. We will stick to the Diagnostics and Treatment we mentioned in Chapter 2 and fit `size`, `Nodes_level`(we are not using nodes because a Kaplan-Miere estimator does not work well with quantitative variables), and `Treatment` each with KM estimators with respect to `dtime`, `rtime`, and `drecurtime` to grasp the survival time within each categories of the variables.
 
 ### `size` vs. Survival Times
 
@@ -44,9 +91,21 @@ legend(6000, 1, legend=c("<=20", "20-50", ">50"),
 KM_None_Recur <- survfit(Surv(rtime, recur) ~ size, data = rotterdam)
 plot(KM_None_Recur, conf.type = "plain", col = c("black","red","blue"), xlab="Days", ylab="Survival")
 legend(6000, 1, legend=c("<=20", "20-50", ">50"),
-       col=c("blue", "red", "blue"), lty=1, cex=0.8,
+       col=c("black", "red", "blue"), lty=1, cex=0.8,
        title="Tumor Size", text.font=6)
 ```
+
+In general, patients with smaller tumor at diagnosis enjoys longer survival for both death and recurrence.
+
+```{r}
+KM_None_drecur <- survfit(Surv(drecurtime, death) ~ size, data = rotterdam_recur)
+plot(KM_None_drecur, conf.type = "plain", col = c("black","red","blue"), xlab="Days", ylab="Survival")
+legend(4500, 1, legend=c("<=20", "20-50", ">50"),
+       col=c("black", "red", "blue"), lty=1, cex=0.8,
+       title="Tumor Size", text.font=6)
+```
+
+The trend is still the same as patients with smaller tumor size enjoy longer survival of death after recurrence, but the survival time now decreases much faster for all groups.
 
 ### `Nodes_level` vs. Survival Times
 
@@ -54,19 +113,32 @@ legend(6000, 1, legend=c("<=20", "20-50", ">50"),
 ```{r}
 KM_None_Death <- survfit(Surv(dtime, death) ~ Nodes_level, data = rotterdam)
 plot(KM_None_Death, conf.type = "plain", col = c("black","red","blue","orange"), xlab="Days", ylab="Survival")
-legend(5000, 1, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
+legend(6000, 1, legend=c("N0", "N1","N2", "N3"),
        col=c("black", "red", "blue", "orange"), lty=1, cex=0.8,
-       title="Treatment Group", text.font=6)
+       title="Nodes_level", text.font=6)
 ```
 
 `Nodes_level` vs. `rtime`
 ```{r}
 KM_None_Recur <- survfit(Surv(rtime, recur) ~ Nodes_level, data = rotterdam)
 plot(KM_None_Recur, conf.type = "plain", col = c("black","red","blue","orange"), xlab="Days", ylab="Survival")
-legend(5000, 1, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
+legend(6000, 1, legend=c("N0", "N1","N2", "N3"),
        col=c("black", "red", "blue", "orange"), lty=1, cex=0.8,
-       title="Treatment Group", text.font=6)
+       title="Nodes_level", text.font=6)
 ```
+
+In general, patients with less nodes tested positive will enjoy longer survival for both death and recurrence.
+
+`Nodes_level` vs. `drecurtime`
+```{r}
+KM_None_drecur <- survfit(Surv(drecurtime, death) ~ Nodes_level, data = rotterdam_recur)
+plot(KM_None_drecur, conf.type = "plain", col = c("black","red","blue","orange"), xlab="Days", ylab="Survival")
+legend(4500, 1, legend=c("N0", "N1","N2", "N3"),
+       col=c("black", "red", "blue", "orange"), lty=1, cex=0.8,
+       title="Nodes_level", text.font=6)
+```
+
+The trend is still the same as patients with fewer nodes tested positive enjoy longer survival of death after recurrence, but the survival time now decreases much faster for all groups, and the difference is small in groups `N1`, `N2` and `N3`.
 
 ### `Treatment` vs. Survival Times
 
@@ -88,13 +160,47 @@ legend(1, 0.4, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
        title="Treatment Group", text.font=6)
 ```
 
+As we have discussed in Chapter 2, we know that generally chemotherapy is used on patients with age lower than 50 years old and hormontherapy is used on patients with age higher than 50 years old. Based on the difference of treatment, we could see that chemotherapy has a better effect than hormontherapy with respect to death time and a smaller yet still better effect regarding the recurrence time.
+
+`Treatment` vs. `drecurtime`
+```{r}
+KM_Treatment_drecur <- survfit(Surv(drecurtime, death) ~ Treatment, data = rotterdam_recur)
+plot(KM_Treatment_drecur, conf.int = FALSE, col = c("black", "red", "blue", "orange"), xlab="Days", ylab="Survival")
+legend(3700, 1, legend=c("Both", "Chemo","Hormon", "NaN/Other Treatment"),
+       col=c("black", "red", "blue", "orange"), lty=1, cex=0.8,
+       title="Treatment Group", text.font=6)
+```
+
+However, sadly enough, from the above plot we could see that no matter what treatment a patient use, it does not make a difference for the death survival time after cancer cells have recurred. This matches our conclusion from the visualization in Chapter 2.
+
 ## Parametric Models
+
+Another point that we are going to explore is if we would be able to fit our data to a parametric model. This matters since if we could fit any parametric model, then we should have a model good enough to generate predictions of breast cancer patients' survival and would have nice and interpretable coefficients to work with.
+
+To do so, we will begin by checking if any of Exponential, Weibull, or Log-normal distribution would be adequate parametric assumption to cast on our data. We will verify the adequacy by checking the Cox-Snell residual plot. We will be fitting models using variables: `Treatment`, `size`, `nodes`, `age`(We have shown in Chapter 2 that age is a confounder for categories in Treatment).
+
+```{r}
+# The Cox-Snell function takes as inputs
+# 1. A vector of Cox-Snell residuals created by the user based on the model being evaluated,
+# 2. A status vector
+# 3. Optional x- and y- limits for the resulting plot
+
+CoxSnell = function(cs,status,xlim=NULL,ylim=NULL)
+{
+kmcs = survfit(Surv(jitter(cs,amount=(max(cs)-min(cs))/1000),status) ~ 1)$surv
+
+plot(log(-log(kmcs)) ~ sort(log(cs)) ,
+      xlab="log(Cox-Snell)", ylab="log(-log(S(Cox-Snell)))", xlim=xlim, ylim=ylim )
+
+abline(0,1,col='red')
+}
+```
 
 Log-normal model:
 ```{r}
 Dlnorm <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + age , dist='lognormal', data=rotterdam)
 Dlnorm
-CS <- -log(1 - plnorm(rotterdam$dtime, 9.709442268-0.431016329*(rotterdam$Treatment=="Chemo")
+CS_Death <- -log(1 - plnorm(rotterdam$dtime, 9.709442268-0.431016329*(rotterdam$Treatment=="Chemo")
                                                   -0.346351742*(rotterdam$Treatment=="Hormon")  
                                                   -0.423626557*(rotterdam$Treatment=="NaN/Other Treatment")
                                                   -0.372703559*(rotterdam$size=="20-50")
@@ -103,26 +209,26 @@ CS <- -log(1 - plnorm(rotterdam$dtime, 9.709442268-0.431016329*(rotterdam$Treatm
                                                   -0.009903862*rotterdam$age, 
                                        1.077329))
 # Make appropriate graph using CoxSnell function
-CoxSnell(CS, rotterdam$death)
+CoxSnell(CS_Death, rotterdam$death)
 ```
 
 ```{r}
-Dlnorm <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + age, dist='lognormal', data=rotterdam)
-Dlnorm
-CS_r <- -log(1 - plnorm(rotterdam$rtime, 8.514204484-0.382172447*(rotterdam$Treatment=="Chemo")
+Rlnorm <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + age, dist='lognormal', data=rotterdam)
+Rlnorm
+CS_Recur <- -log(1 - plnorm(rotterdam$rtime, 8.514204484-0.382172447*(rotterdam$Treatment=="Chemo")
                                                   -0.479063703*(rotterdam$Treatment=="Hormon")   
                                                   -0.605193863*(rotterdam$Treatment=="NaN/Other Treatment")
                                                   -0.458345796*(rotterdam$size=="20-50")
                                                   -0.738657689*(rotterdam$size==">50")
                                                   -0.107708963*rotterdam$nodes 
-                                                  +0.009059467*rotterdam$age, 1.340545))
-summary(Dlnorm)
+                                                  +0.009059467*rotterdam$age, 
+                                       1.340545))
 
 # Make appropriate graph using CoxSnell function
-CoxSnell(CS_r, rotterdam$recur)
+CoxSnell(CS_Recur, rotterdam$recur)
 ```
 
-
+We could see that the Log-normal parametric model is an adequate model for both the `dtime` and `rtime` vs. `Treatment` + `size` + `nodes` + `age`.
 
 
 
@@ -130,7 +236,7 @@ CoxSnell(CS_r, rotterdam$recur)
 ## Cox-PH model:
 
 ```{r}
-m_death = coxph(Surv(dtime, death) ~ Treatment + size + nodes + strata(age), data=rotterdam)
+m_death = coxph(Surv(dtime, death) ~ Treatment + size + nodes + age, data=rotterdam)
 m_death
 ```
 
@@ -140,7 +246,7 @@ cox.zph(m_death)
 
 
 ```{r}
-m_recur = coxph(Surv(rtime, recur) ~ size, data=rotterdam)
+m_recur = coxph(Surv(rtime, recur) ~ Treatment + size + nodes + age, data=rotterdam)
 m_recur
 ```
 

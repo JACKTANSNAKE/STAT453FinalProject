@@ -1,0 +1,17 @@
+motivation
+some-background-information
+data-exploration
+loading-data
+data-wrangling
+data-visualizations-and-exploration
+diagnostics-vs.-survival-times
+treatment-vs.-survival-times
+survival
+loading-data-1
+kaplan-miere
+size-vs.-survival-times
+nodes_level-vs.-survival-times
+treatment-vs.-survival-times-1
+parametric-models
+cox-ph-model
+reference

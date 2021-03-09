@@ -14,7 +14,7 @@
 
 <meta name="author" content="JACK TAN, YIMING MIAO" />
 
-<meta name="date" content="2021-03-08" />
+<meta name="date" content="2021-03-09" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -150,9 +150,9 @@ img {
 <li class="has-sub"><a href="2-data-exploration.html#data-exploration"><span class="toc-section-number">2</span> Data Exploration</a><ul>
 <li><a href="2-1-loading-data.html#loading-data"><span class="toc-section-number">2.1</span> Loading Data</a></li>
 <li><a href="2-2-data-wrangling.html#data-wrangling"><span class="toc-section-number">2.2</span> Data Wrangling</a></li>
-<li class="has-sub"><a href="2-3-data-visualizations.html#data-visualizations"><span class="toc-section-number">2.3</span> Data visualizations</a><ul>
-<li><a href="2-3-data-visualizations.html#diagnositcs-vs.-survival-times"><span class="toc-section-number">2.3.1</span> Diagnositcs vs. Survival Times</a></li>
-<li><a href="2-3-data-visualizations.html#treatment-vs.-survival-times"><span class="toc-section-number">2.3.2</span> Treatment vs. Survival Times</a></li>
+<li class="has-sub"><a href="2-3-data-visualizations-and-exploration.html#data-visualizations-and-exploration"><span class="toc-section-number">2.3</span> Data visualizations and exploration</a><ul>
+<li><a href="2-3-data-visualizations-and-exploration.html#diagnostics-vs.-survival-times"><span class="toc-section-number">2.3.1</span> Diagnostics vs. Survival Times</a></li>
+<li><a href="2-3-data-visualizations-and-exploration.html#treatment-vs.-survival-times"><span class="toc-section-number">2.3.2</span> Treatment vs. Survival Times</a></li>
 </ul></li>
 </ul></li>
 <li class="has-sub"><a href="3-survival.html#survival"><span class="toc-section-number">3</span> Survival</a><ul>
@@ -163,7 +163,7 @@ img {
 <li><a href="3-2-kaplan-miere.html#treatment-vs.-survival-times-1"><span class="toc-section-number">3.2.3</span> <code>Treatment</code> vs. Survival Times</a></li>
 </ul></li>
 <li><a href="3-3-parametric-models.html#parametric-models"><span class="toc-section-number">3.3</span> Parametric Models</a></li>
-<li><a href="3-4-cox-ph.html#cox-ph"><span class="toc-section-number">3.4</span> Cox-PH</a></li>
+<li><a href="3-4-cox-ph-model.html#cox-ph-model"><span class="toc-section-number">3.4</span> Cox-PH model:</a></li>
 </ul></li>
 <li><a href="4-reference.html#reference"><span class="toc-section-number">4</span> Reference</a></li>
 </ul>
@@ -174,10 +174,90 @@ img {
 <div class="col-sm-12">
 <div id="parametric-models" class="section level2">
 <h2><span class="header-section-number">3.3</span> Parametric Models</h2>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1"><span class="co"># The Cox-Snell function takes as inputs</span></a>
+<a class="sourceLine" id="cb31-2" title="2"><span class="co"># 1. A vector of Cox-Snell residuals created by the user based on the model being evaluated,</span></a>
+<a class="sourceLine" id="cb31-3" title="3"><span class="co"># 2. A status vector</span></a>
+<a class="sourceLine" id="cb31-4" title="4"><span class="co"># 3. Optional x- and y- limits for the resulting plot</span></a>
+<a class="sourceLine" id="cb31-5" title="5"></a>
+<a class="sourceLine" id="cb31-6" title="6">CoxSnell =<span class="st"> </span><span class="cf">function</span>(cs,status,<span class="dt">xlim=</span><span class="ot">NULL</span>,<span class="dt">ylim=</span><span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb31-7" title="7">{</a>
+<a class="sourceLine" id="cb31-8" title="8">kmcs =<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(<span class="kw">jitter</span>(cs,<span class="dt">amount=</span>(<span class="kw">max</span>(cs)<span class="op">-</span><span class="kw">min</span>(cs))<span class="op">/</span><span class="dv">1000</span>),status) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>)<span class="op">$</span>surv</a>
+<a class="sourceLine" id="cb31-9" title="9"></a>
+<a class="sourceLine" id="cb31-10" title="10"><span class="kw">plot</span>(<span class="kw">log</span>(<span class="op">-</span><span class="kw">log</span>(kmcs)) <span class="op">~</span><span class="st"> </span><span class="kw">sort</span>(<span class="kw">log</span>(cs)) ,</a>
+<a class="sourceLine" id="cb31-11" title="11">      <span class="dt">xlab=</span><span class="st">&quot;log(Cox-Snell)&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;log(-log(S(Cox-Snell)))&quot;</span>, <span class="dt">xlim=</span>xlim, <span class="dt">ylim=</span>ylim )</a>
+<a class="sourceLine" id="cb31-12" title="12"></a>
+<a class="sourceLine" id="cb31-13" title="13"><span class="kw">abline</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dt">col=</span><span class="st">&#39;red&#39;</span>)</a>
+<a class="sourceLine" id="cb31-14" title="14">}</a></code></pre></div>
+<p>Log-normal model:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1">Dlnorm &lt;-<span class="st"> </span><span class="kw">survreg</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age , <span class="dt">dist=</span><span class="st">&#39;lognormal&#39;</span>, <span class="dt">data=</span>rotterdam)</a>
+<a class="sourceLine" id="cb32-2" title="2">Dlnorm</a></code></pre></div>
+<pre><code>## Call:
+## survreg(formula = Surv(dtime, death) ~ Treatment + size + nodes + 
+##     age, data = rotterdam, dist = &quot;lognormal&quot;)
+## 
+## Coefficients:
+##                  (Intercept)               TreatmentChemo 
+##                  9.709442268                 -0.431016329 
+##              TreatmentHormon TreatmentNaN/Other Treatment 
+##                 -0.346351742                 -0.423626557 
+##                    size20-50                      size&gt;50 
+##                 -0.372703559                 -0.654189313 
+##                        nodes                          age 
+##                 -0.079103425                 -0.009903862 
+## 
+## Scale= 1.077329 
+## 
+## Loglik(model)= -12034.1   Loglik(intercept only)= -12286.5
+##  Chisq= 504.67 on 7 degrees of freedom, p= &lt;2e-16 
+## n= 2982</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1">CS_Death &lt;-<span class="st"> </span><span class="op">-</span><span class="kw">log</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span><span class="kw">plnorm</span>(rotterdam<span class="op">$</span>dtime, <span class="fl">9.709442268-0.431016329</span><span class="op">*</span>(rotterdam<span class="op">$</span>Treatment<span class="op">==</span><span class="st">&quot;Chemo&quot;</span>)</a>
+<a class="sourceLine" id="cb34-2" title="2">                                                  <span class="fl">-0.346351742</span><span class="op">*</span>(rotterdam<span class="op">$</span>Treatment<span class="op">==</span><span class="st">&quot;Hormon&quot;</span>)  </a>
+<a class="sourceLine" id="cb34-3" title="3">                                                  <span class="fl">-0.423626557</span><span class="op">*</span>(rotterdam<span class="op">$</span>Treatment<span class="op">==</span><span class="st">&quot;NaN/Other Treatment&quot;</span>)</a>
+<a class="sourceLine" id="cb34-4" title="4">                                                  <span class="fl">-0.372703559</span><span class="op">*</span>(rotterdam<span class="op">$</span>size<span class="op">==</span><span class="st">&quot;20-50&quot;</span>)</a>
+<a class="sourceLine" id="cb34-5" title="5">                                                  <span class="fl">-0.654189313</span><span class="op">*</span>(rotterdam<span class="op">$</span>size<span class="op">==</span><span class="st">&quot;&gt;50&quot;</span>)</a>
+<a class="sourceLine" id="cb34-6" title="6">                                                  <span class="fl">-0.079103425</span><span class="op">*</span>rotterdam<span class="op">$</span>nodes </a>
+<a class="sourceLine" id="cb34-7" title="7">                                                  <span class="fl">-0.009903862</span><span class="op">*</span>rotterdam<span class="op">$</span>age, </a>
+<a class="sourceLine" id="cb34-8" title="8">                                       <span class="fl">1.077329</span>))</a>
+<a class="sourceLine" id="cb34-9" title="9"><span class="co"># Make appropriate graph using CoxSnell function</span></a>
+<a class="sourceLine" id="cb34-10" title="10"><span class="kw">CoxSnell</span>(CS_Death, rotterdam<span class="op">$</span>death)</a></code></pre></div>
+<p><img src="Rotterdam_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" title="1">Rlnorm &lt;-<span class="st"> </span><span class="kw">survreg</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age, <span class="dt">dist=</span><span class="st">&#39;lognormal&#39;</span>, <span class="dt">data=</span>rotterdam)</a>
+<a class="sourceLine" id="cb35-2" title="2">Rlnorm</a></code></pre></div>
+<pre><code>## Call:
+## survreg(formula = Surv(rtime, recur) ~ Treatment + size + nodes + 
+##     age, data = rotterdam, dist = &quot;lognormal&quot;)
+## 
+## Coefficients:
+##                  (Intercept)               TreatmentChemo 
+##                  8.514204484                 -0.382172447 
+##              TreatmentHormon TreatmentNaN/Other Treatment 
+##                 -0.479063703                 -0.605193863 
+##                    size20-50                      size&gt;50 
+##                 -0.458345796                 -0.738657689 
+##                        nodes                          age 
+##                 -0.107708963                  0.009059467 
+## 
+## Scale= 1.340545 
+## 
+## Loglik(model)= -13803.8   Loglik(intercept only)= -14045.8
+##  Chisq= 483.94 on 7 degrees of freedom, p= &lt;2e-16 
+## n= 2982</code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" title="1">CS_Recur &lt;-<span class="st"> </span><span class="op">-</span><span class="kw">log</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span><span class="kw">plnorm</span>(rotterdam<span class="op">$</span>rtime, <span class="fl">8.514204484-0.382172447</span><span class="op">*</span>(rotterdam<span class="op">$</span>Treatment<span class="op">==</span><span class="st">&quot;Chemo&quot;</span>)</a>
+<a class="sourceLine" id="cb37-2" title="2">                                                  <span class="fl">-0.479063703</span><span class="op">*</span>(rotterdam<span class="op">$</span>Treatment<span class="op">==</span><span class="st">&quot;Hormon&quot;</span>)   </a>
+<a class="sourceLine" id="cb37-3" title="3">                                                  <span class="fl">-0.605193863</span><span class="op">*</span>(rotterdam<span class="op">$</span>Treatment<span class="op">==</span><span class="st">&quot;NaN/Other Treatment&quot;</span>)</a>
+<a class="sourceLine" id="cb37-4" title="4">                                                  <span class="fl">-0.458345796</span><span class="op">*</span>(rotterdam<span class="op">$</span>size<span class="op">==</span><span class="st">&quot;20-50&quot;</span>)</a>
+<a class="sourceLine" id="cb37-5" title="5">                                                  <span class="fl">-0.738657689</span><span class="op">*</span>(rotterdam<span class="op">$</span>size<span class="op">==</span><span class="st">&quot;&gt;50&quot;</span>)</a>
+<a class="sourceLine" id="cb37-6" title="6">                                                  <span class="fl">-0.107708963</span><span class="op">*</span>rotterdam<span class="op">$</span>nodes </a>
+<a class="sourceLine" id="cb37-7" title="7">                                                  <span class="fl">+0.009059467</span><span class="op">*</span>rotterdam<span class="op">$</span>age, </a>
+<a class="sourceLine" id="cb37-8" title="8">                                       <span class="fl">1.340545</span>))</a>
+<a class="sourceLine" id="cb37-9" title="9"></a>
+<a class="sourceLine" id="cb37-10" title="10"><span class="co"># Make appropriate graph using CoxSnell function</span></a>
+<a class="sourceLine" id="cb37-11" title="11"><span class="kw">CoxSnell</span>(CS_Recur, rotterdam<span class="op">$</span>recur)</a></code></pre></div>
+<p><img src="Rotterdam_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 </div>
 <p style="text-align: center;">
 <a href="3-2-kaplan-miere.html"><button class="btn btn-default">Previous</button></a>
-<a href="3-4-cox-ph.html"><button class="btn btn-default">Next</button></a>
+<a href="3-4-cox-ph-model.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>

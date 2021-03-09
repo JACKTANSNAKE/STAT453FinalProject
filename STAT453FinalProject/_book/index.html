@@ -24,7 +24,7 @@
 <meta name="author" content="JACK TAN, YIMING MIAO" />
 
 
-<meta name="date" content="2021-03-08" />
+<meta name="date" content="2021-03-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -133,8 +133,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2" data-path="data-exploration.html"><a href="data-exploration.html"><i class="fa fa-check"></i><b>2</b> Data Exploration</a><ul>
 <li class="chapter" data-level="2.1" data-path="data-exploration.html"><a href="data-exploration.html#loading-data"><i class="fa fa-check"></i><b>2.1</b> Loading Data</a></li>
 <li class="chapter" data-level="2.2" data-path="data-exploration.html"><a href="data-exploration.html#data-wrangling"><i class="fa fa-check"></i><b>2.2</b> Data Wrangling</a></li>
-<li class="chapter" data-level="2.3" data-path="data-exploration.html"><a href="data-exploration.html#data-visualizations"><i class="fa fa-check"></i><b>2.3</b> Data visualizations</a><ul>
-<li class="chapter" data-level="2.3.1" data-path="data-exploration.html"><a href="data-exploration.html#diagnositcs-vs.-survival-times"><i class="fa fa-check"></i><b>2.3.1</b> Diagnositcs vs. Survival Times</a></li>
+<li class="chapter" data-level="2.3" data-path="data-exploration.html"><a href="data-exploration.html#data-visualizations-and-exploration"><i class="fa fa-check"></i><b>2.3</b> Data visualizations and exploration</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="data-exploration.html"><a href="data-exploration.html#diagnostics-vs.-survival-times"><i class="fa fa-check"></i><b>2.3.1</b> Diagnostics vs. Survival Times</a></li>
 <li class="chapter" data-level="2.3.2" data-path="data-exploration.html"><a href="data-exploration.html#treatment-vs.-survival-times"><i class="fa fa-check"></i><b>2.3.2</b> Treatment vs. Survival Times</a></li>
 </ul></li>
 </ul></li>
@@ -146,7 +146,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.2.3" data-path="survival.html"><a href="survival.html#treatment-vs.-survival-times-1"><i class="fa fa-check"></i><b>3.2.3</b> <code>Treatment</code> vs. Survival Times</a></li>
 </ul></li>
 <li class="chapter" data-level="3.3" data-path="survival.html"><a href="survival.html#parametric-models"><i class="fa fa-check"></i><b>3.3</b> Parametric Models</a></li>
-<li class="chapter" data-level="3.4" data-path="survival.html"><a href="survival.html#cox-ph"><i class="fa fa-check"></i><b>3.4</b> Cox-PH</a></li>
+<li class="chapter" data-level="3.4" data-path="survival.html"><a href="survival.html#cox-ph-model"><i class="fa fa-check"></i><b>3.4</b> Cox-PH model:</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="reference.html"><a href="reference.html"><i class="fa fa-check"></i><b>4</b> Reference</a></li>
 </ul>
@@ -169,11 +169,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">Rotterdam</h1>
 <p class="author"><em>JACK TAN, YIMING MIAO</em></p>
-<p class="date"><em>2021-03-08</em></p>
+<p class="date"><em>2021-03-09</em></p>
 </div>
 <div id="motivation" class="section level1">
 <h1><span class="header-section-number">Chapter1</span> Motivation</h1>
-<p>According to World Health Organization<span class="math inline">\(*\)</span>, Cancer is a leading cause of death worldwide, accounting for an estimated 9.6 million deaths in 2018. And amongst all cancer types, breast cancer(along with lung cancer) has the top cases of death: 2.09 million cases in 2018. According to the CDC<span class="math inline">\(*\)</span>, Breast cancer is also the second most common cancer among women in the United States, comprising 22.9% of invasive cancers in women and 16% of all female cancers. However, because of the cancer’s characteristics, breast cancer patients have relatively high 5-year survival rate of 85% compared to other more lethal cancers according to research conducted in the UK<span class="math inline">\(*\)</span>. We think it is worthwhile to look at the relationship between survival/recurrence time and some diagnostic criterion. We are also going to explore the effect of different treatments on survival/recurrence.</p>
+<p>According to World Health Organization<span class="math inline">\(*\)</span>, Cancer is a leading cause of death worldwide, accounting for an estimated 9.6 million deaths in 2018. And amongst all cancer types, breast cancer(along with lung cancer) has the top cases of death: 2.09 million cases in 2018. According to the CDC<span class="math inline">\(*\)</span>, Breast cancer is also the second most common cancer among women in the United States, comprising 22.9% of invasive cancers in women and 16% of all female cancers. However, because of the cancer’s characteristics, breast cancer patients have relatively high 5-year survival rate of 85% compared to other more lethal cancers according to research conducted in the UK<span class="math inline">\(*\)</span>. We think it is worthwhile to look at the relationship between survival/recurrence time and some diagnostic criterion. We are also going to explore the effect of different treatments on survival/recurrence. Finally we will look at all the factors together.</p>
 <div id="some-background-information" class="section level2">
 <h2><span class="header-section-number">1.1</span> Some Background Information</h2>
 <p>For doctors to be able to assess the severity and different types of breast cancer, researchers have come up with a diagnosing system called the TNM<span class="math inline">\(*\)</span> Staging system that is widely used in the diagnostics of breast cancer:</p>

@@ -24,7 +24,7 @@
 <meta name="author" content="JACK TAN, YIMING MIAO" />
 
 
-<meta name="date" content="2021-03-08" />
+<meta name="date" content="2021-03-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -133,8 +133,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2" data-path="data-exploration.html"><a href="data-exploration.html"><i class="fa fa-check"></i><b>2</b> Data Exploration</a><ul>
 <li class="chapter" data-level="2.1" data-path="data-exploration.html"><a href="data-exploration.html#loading-data"><i class="fa fa-check"></i><b>2.1</b> Loading Data</a></li>
 <li class="chapter" data-level="2.2" data-path="data-exploration.html"><a href="data-exploration.html#data-wrangling"><i class="fa fa-check"></i><b>2.2</b> Data Wrangling</a></li>
-<li class="chapter" data-level="2.3" data-path="data-exploration.html"><a href="data-exploration.html#data-visualizations"><i class="fa fa-check"></i><b>2.3</b> Data visualizations</a><ul>
-<li class="chapter" data-level="2.3.1" data-path="data-exploration.html"><a href="data-exploration.html#diagnositcs-vs.-survival-times"><i class="fa fa-check"></i><b>2.3.1</b> Diagnositcs vs. Survival Times</a></li>
+<li class="chapter" data-level="2.3" data-path="data-exploration.html"><a href="data-exploration.html#data-visualizations-and-exploration"><i class="fa fa-check"></i><b>2.3</b> Data visualizations and exploration</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="data-exploration.html"><a href="data-exploration.html#diagnostics-vs.-survival-times"><i class="fa fa-check"></i><b>2.3.1</b> Diagnostics vs. Survival Times</a></li>
 <li class="chapter" data-level="2.3.2" data-path="data-exploration.html"><a href="data-exploration.html#treatment-vs.-survival-times"><i class="fa fa-check"></i><b>2.3.2</b> Treatment vs. Survival Times</a></li>
 </ul></li>
 </ul></li>
@@ -146,7 +146,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.2.3" data-path="survival.html"><a href="survival.html#treatment-vs.-survival-times-1"><i class="fa fa-check"></i><b>3.2.3</b> <code>Treatment</code> vs. Survival Times</a></li>
 </ul></li>
 <li class="chapter" data-level="3.3" data-path="survival.html"><a href="survival.html#parametric-models"><i class="fa fa-check"></i><b>3.3</b> Parametric Models</a></li>
-<li class="chapter" data-level="3.4" data-path="survival.html"><a href="survival.html#cox-ph"><i class="fa fa-check"></i><b>3.4</b> Cox-PH</a></li>
+<li class="chapter" data-level="3.4" data-path="survival.html"><a href="survival.html#cox-ph-model"><i class="fa fa-check"></i><b>3.4</b> Cox-PH model:</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="reference.html"><a href="reference.html"><i class="fa fa-check"></i><b>4</b> Reference</a></li>
 </ul>
@@ -276,12 +276,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb6-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">grade =</span> <span class="kw">as.factor</span>(grade))</a></code></pre></div>
 <p>As we were examining through the data, we found that upon the <code>chemo</code> variable and the <code>hormon</code> variable, there are instances where patients gets both therapy or neither. So in order to explore the relationship between treatment and survival, we introduce a new variable called <code>Treatment</code>, using the <code>chemo</code> and <code>hormon</code> variables.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">rotterdam &lt;-<span class="st"> </span>rotterdam <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Treatment =</span> <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="st">&quot;Chemo&quot;</span>, <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Hormon&quot;</span>, <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Both&quot;</span>, <span class="st">&quot;NaN/Other Treatment&quot;</span>))))</a></code></pre></div>
+<a class="sourceLine" id="cb7-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Treatment =</span> <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="st">&quot;Chemo&quot;</span>,</a>
+<a class="sourceLine" id="cb7-3" title="3">                     <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Hormon&quot;</span>, </a>
+<a class="sourceLine" id="cb7-4" title="4">                     <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Both&quot;</span>, <span class="st">&quot;NaN/Other Treatment&quot;</span>)))) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Treatment =</span> <span class="kw">as.factor</span>(Treatment))</a></code></pre></div>
 </div>
-<div id="data-visualizations" class="section level2">
-<h2><span class="header-section-number">2.3</span> Data visualizations</h2>
-<div id="diagnositcs-vs.-survival-times" class="section level3">
-<h3><span class="header-section-number">2.3.1</span> Diagnositcs vs. Survival Times</h3>
+<div id="data-visualizations-and-exploration" class="section level2">
+<h2><span class="header-section-number">2.3</span> Data visualizations and exploration</h2>
+<div id="diagnostics-vs.-survival-times" class="section level3">
+<h3><span class="header-section-number">2.3.1</span> Diagnostics vs. Survival Times</h3>
 <p><code>size</code> vs. <code>dtime</code></p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> size, <span class="dt">y =</span> dtime, <span class="dt">fill =</span> size)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb8-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
@@ -290,6 +293,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> size, <span class="dt">y =</span> rtime, <span class="dt">fill =</span> size)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb9-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
 <p><img src="Rotterdam_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>As we can see from the two plots above, tumor size could be an important factor that affects patients’ survival time and recur time. For <code>size</code> smaller than 20, most of the patients are able to survive or encounter recurrence after roughly 3000 days. But for <code>size</code> 20-50 and &gt;50, it’s highly likely for breast cancer to recur in 500 days.</p>
 <p><code>Nodes_level</code> vs. <code>dtime</code></p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> Nodes_level, <span class="dt">y =</span> dtime, <span class="dt">fill =</span> Nodes_level)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb10-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
@@ -298,6 +302,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> Nodes_level, <span class="dt">y =</span> rtime, <span class="dt">fill =</span> Nodes_level)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb11-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
 <p><img src="Rotterdam_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>Similarly, <code>nodes</code> is also a factor impacting the life of breast cancer patients. For patients with <code>Nodes_level</code> N2 and N3, a quite large proportion of them fail to survival more than 1000 days and encounter recurrence in less than 500 days.</p>
 </div>
 <div id="treatment-vs.-survival-times" class="section level3">
 <h3><span class="header-section-number">2.3.2</span> Treatment vs. Survival Times</h3>
@@ -309,6 +314,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> rotterdam, <span class="kw">aes</span>(<span class="dt">x =</span> Treatment, <span class="dt">y =</span> rtime, <span class="dt">fill =</span> Treatment)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb13-2" title="2"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>)</a></code></pre></div>
 <p><img src="Rotterdam_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>By examing the two plots above, it seems that <code>Treatment</code> would not affect patients survival time or recurrence that much. We can find that <code>chemo + hormon</code> is likely to be the one with best curative effect, that patients receiving both chemo and hormon therapy tend to have longer survival time and longer time to recurrence. And the effect of hormon therapy itself seems not that satisfying.</p>
+<p>We also found a bi-model shape in <code>NaN/Other Traetment</code> group. This may because the two peaks correponds to no treatment and other treatment separately, but currently we don’t more information investigating the true reason.</p>
 <p>A very important criterion in analysis about cancer is the 5-year survival rate. In order to examine that, we introduce a new variable called <code>5_year_survival</code>, which indicates 1 if a patients survival time is larger than 5 years and 0 vice versa.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">rotterdam &lt;-<span class="st"> </span>rotterdam <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb14-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dtime_Years =</span> <span class="kw">floor</span>(dtime<span class="op">/</span><span class="dv">365</span>)) <span class="op">%&gt;%</span></a>
@@ -339,6 +346,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 2                  1    685</code></pre>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1"><span class="dv">685</span><span class="op">/</span>(<span class="dv">685</span> <span class="op">+</span><span class="st"> </span><span class="dv">2297</span>)</a></code></pre></div>
 <pre><code>## [1] 0.2297116</code></pre>
+<p>We can find that the 5-year survival rate for breast cancer is just fine, and around 70% of patients are able to live more than 5 years. However, the 10-year survival rate is still disappointing given the current medical level, and only around 20% patients could live more than 10 years after diagnosis.</p>
+<p>All above information reminds people, especially females, that screening does save lives. Get screening and diagnosis earlier could greatly help improving the quality of life in the future.</p>
 
 </div>
 </div>

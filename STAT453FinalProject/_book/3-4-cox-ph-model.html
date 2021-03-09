@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="Chapter3 Survival | Rotterdam" />
+<meta property="og:title" content="3.4 Cox-PH model: | Rotterdam" />
 <meta property="og:type" content="book" />
 
 
@@ -23,9 +23,9 @@ MathJax.Hub.Config({
 </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
 
-<meta name="description" content="Chapter3 Survival | Rotterdam">
+<meta name="description" content="3.4 Cox-PH model: | Rotterdam">
 
-<title>Chapter3 Survival | Rotterdam</title>
+<title>3.4 Cox-PH model: | Rotterdam</title>
 
 <script src="libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -172,12 +172,51 @@ img {
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="survival" class="section level1">
-<h1><span class="header-section-number">Chapter3</span> Survival</h1>
+<div id="cox-ph-model" class="section level2">
+<h2><span class="header-section-number">3.4</span> Cox-PH model:</h2>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1">m_death =<span class="st"> </span><span class="kw">coxph</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span><span class="kw">strata</span>(age), <span class="dt">data=</span>rotterdam)</a>
+<a class="sourceLine" id="cb38-2" title="2">m_death</a></code></pre></div>
+<pre><code>## Call:
+## coxph(formula = Surv(dtime, death) ~ Treatment + size + nodes + 
+##     strata(age), data = rotterdam)
+## 
+##                                  coef exp(coef) se(coef)      z        p
+## TreatmentChemo               0.566734  1.762501 0.368984  1.536    0.125
+## TreatmentHormon              0.571493  1.770909 0.375700  1.521    0.128
+## TreatmentNaN/Other Treatment 0.497674  1.644890 0.365574  1.361    0.173
+## size20-50                    0.464177  1.590704 0.066890  6.939 3.94e-12
+## size&gt;50                      0.772204  2.164532 0.097352  7.932 2.16e-15
+## nodes                        0.078158  1.081294 0.005365 14.567  &lt; 2e-16
+## 
+## Likelihood ratio test=391.7  on 6 df, p=&lt; 2.2e-16
+## n= 2982, number of events= 1272</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" title="1"><span class="kw">cox.zph</span>(m_death)</a></code></pre></div>
+<pre><code>##           chisq df    p
+## Treatment  3.60  3 0.31
+## size       4.32  2 0.12
+## nodes      1.37  1 0.24
+## GLOBAL     9.64  6 0.14</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" title="1">m_recur =<span class="st"> </span><span class="kw">coxph</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span>size, <span class="dt">data=</span>rotterdam)</a>
+<a class="sourceLine" id="cb42-2" title="2">m_recur</a></code></pre></div>
+<pre><code>## Call:
+## coxph(formula = Surv(rtime, recur) ~ size, data = rotterdam)
+## 
+##              coef exp(coef) se(coef)      z      p
+## size20-50 0.55148   1.73583  0.05586  9.872 &lt;2e-16
+## size&gt;50   1.04332   2.83861  0.08148 12.804 &lt;2e-16
+## 
+## Likelihood ratio test=185.3  on 2 df, p=&lt; 2.2e-16
+## n= 2982, number of events= 1518</code></pre>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" title="1"><span class="kw">cox.zph</span>(m_recur)</a></code></pre></div>
+<pre><code>##        chisq df       p
+## size    35.5  2 1.9e-08
+## GLOBAL  35.5  2 1.9e-08</code></pre>
+
 </div>
+<!-- </div> -->
 <p style="text-align: center;">
-<a href="2-3-data-visualizations-and-exploration.html"><button class="btn btn-default">Previous</button></a>
-<a href="3-1-loading-data-1.html"><button class="btn btn-default">Next</button></a>
+<a href="3-3-parametric-models.html"><button class="btn btn-default">Previous</button></a>
+<a href="4-reference.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
