@@ -16,16 +16,21 @@ data(rotterdam)
 rotterdam <- rotterdam %>%
   mutate(Treatment = ifelse(chemo == 1 & hormon == 0, "Chemo", 
                      ifelse(chemo == 0 & hormon == 1, "Hormon", 
-                     ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment"))))
+                     ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment")))) %>% 
+  mutate(Treatment = as.factor(Treatment))
+
 rotterdam <- rotterdam %>% 
   mutate(Nodes_level = ifelse(nodes == 0, "N0", 
                        ifelse(nodes >= 1 & nodes <= 3, "N1", 
                        ifelse(nodes >= 4 & nodes <= 9, "N2", 
-                       ifelse(nodes >= 10, "N3", NaN)))))
+                       ifelse(nodes >= 10, "N3", NaN))))) %>% 
+  mutate(Treatment = as.factor(Treatment))
+
 rotterdam <- rotterdam %>%
   mutate(grade = as.factor(grade)) %>%
   mutate(size = as.factor(size)) %>%
   mutate(Treatment = as.factor(Treatment))
+
 rotterdam_recur <- rotterdam %>%
   filter(recur == 1) %>%
   mutate(drecurtime = dtime-rtime)
@@ -280,6 +285,16 @@ We could see that the Log-normal parametric model is an adequate model for both 
 TODO: why log-normal fit.
 
 TODO: explain why age in `rtime` models is positive: competing risks.
+
+```{r}
+rotterdam_new <- rotterdam %>% 
+  mutate(state = ifelse(death == 1 & recur == 0, "death",
+                 ifelse(death == 0 & recur == 1, "recur", 
+                 ifelse(death == 1 & recur == 1, "both", "neither"))))
+
+ggplot(rotterdam_new, aes(x=age, color=state)) +
+  geom_density()
+```
 
 
 ## Cox-PH model:
