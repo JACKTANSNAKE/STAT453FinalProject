@@ -153,17 +153,25 @@ img {
 <li class="has-sub"><a href="2-3-data-visualizations-and-exploration.html#data-visualizations-and-exploration"><span class="toc-section-number">2.3</span> Data visualizations and exploration</a><ul>
 <li><a href="2-3-data-visualizations-and-exploration.html#diagnostics-vs.-survival-times"><span class="toc-section-number">2.3.1</span> Diagnostics vs. Survival Times</a></li>
 <li><a href="2-3-data-visualizations-and-exploration.html#treatment-vs.-survival-times"><span class="toc-section-number">2.3.2</span> Treatment vs. Survival Times</a></li>
+<li><a href="2-3-data-visualizations-and-exploration.html#age-treatment-vs.-survival-times"><span class="toc-section-number">2.3.3</span> <code>age</code> + <code>Treatment</code> vs. Survival Times</a></li>
+<li><a href="2-3-data-visualizations-and-exploration.html#general-x-year-survival-rate"><span class="toc-section-number">2.3.4</span> General X-year Survival Rate</a></li>
 </ul></li>
 </ul></li>
 <li class="has-sub"><a href="3-survival.html#survival"><span class="toc-section-number">3</span> Survival</a><ul>
 <li><a href="3-1-loading-data-1.html#loading-data-1"><span class="toc-section-number">3.1</span> Loading Data</a></li>
-<li class="has-sub"><a href="3-2-kaplan-miere.html#kaplan-miere"><span class="toc-section-number">3.2</span> Kaplan-Miere</a><ul>
-<li><a href="3-2-kaplan-miere.html#size-vs.-survival-times"><span class="toc-section-number">3.2.1</span> <code>size</code> vs. Survival Times</a></li>
-<li><a href="3-2-kaplan-miere.html#nodes_level-vs.-survival-times"><span class="toc-section-number">3.2.2</span> <code>Nodes_level</code> vs. Survival Times</a></li>
-<li><a href="3-2-kaplan-miere.html#treatment-vs.-survival-times-1"><span class="toc-section-number">3.2.3</span> <code>Treatment</code> vs. Survival Times</a></li>
+<li><a href="3-2-kaplan-miere-estimator-of-the-entire-dataset.html#kaplan-miere-estimator-of-the-entire-dataset"><span class="toc-section-number">3.2</span> Kaplan-Miere estimator of the entire dataset</a></li>
+<li class="has-sub"><a href="3-3-kaplan-miere-estimator-on-different-variables-in-rotterdam.html#kaplan-miere-estimator-on-different-variables-in-rotterdam"><span class="toc-section-number">3.3</span> Kaplan-Miere estimator on different variables in <code>rotterdam</code></a><ul>
+<li><a href="3-3-kaplan-miere-estimator-on-different-variables-in-rotterdam.html#size-vs.-survival-times"><span class="toc-section-number">3.3.1</span> <code>size</code> vs. Survival Times</a></li>
+<li><a href="3-3-kaplan-miere-estimator-on-different-variables-in-rotterdam.html#nodes_level-vs.-survival-times"><span class="toc-section-number">3.3.2</span> <code>Nodes_level</code> vs. Survival Times</a></li>
+<li><a href="3-3-kaplan-miere-estimator-on-different-variables-in-rotterdam.html#treatment-vs.-survival-times-1"><span class="toc-section-number">3.3.3</span> <code>Treatment</code> vs. Survival Times</a></li>
 </ul></li>
-<li><a href="3-3-parametric-models.html#parametric-models"><span class="toc-section-number">3.3</span> Parametric Models</a></li>
-<li><a href="3-4-cox-ph-model.html#cox-ph-model"><span class="toc-section-number">3.4</span> Cox-PH model:</a></li>
+<li class="has-sub"><a href="3-4-parametric-models.html#parametric-models"><span class="toc-section-number">3.4</span> Parametric Models</a><ul>
+<li><a href="3-4-parametric-models.html#user-defined-cox-snell-function"><span class="toc-section-number">3.4.1</span> User-defined Cox-Snell function</a></li>
+<li><a href="3-4-parametric-models.html#exponential-models"><span class="toc-section-number">3.4.2</span> Exponential models</a></li>
+<li><a href="3-4-parametric-models.html#weibull-models"><span class="toc-section-number">3.4.3</span> Weibull models</a></li>
+<li><a href="3-4-parametric-models.html#log-normal-models"><span class="toc-section-number">3.4.4</span> Log-normal models</a></li>
+</ul></li>
+<li><a href="3-5-cox-ph-model.html#cox-ph-model"><span class="toc-section-number">3.5</span> Cox-PH model:</a></li>
 </ul></li>
 <li><a href="4-reference.html#reference"><span class="toc-section-number">4</span> Reference</a></li>
 </ul>
@@ -183,12 +191,12 @@ img {
 ## 1 &lt;=20    1387
 ## 2 20-50   1291
 ## 3 &gt;50      304</code></pre>
-<p>For lymph nodes, the usual way of classifying the severity would be:<code>N0</code> for no positive nodes; <code>N1</code> for 1-3 positive nodes; <code>N2</code> for 4-9 positive nodes; and <code>N3</code> for more than 10 nodes. We will follow this classification and make a new factor called <code>Nodes_level</code></p>
+<p>The number of lymph nodes tested positive is a important measure in the TNM system. However, right now the <code>nodes</code> variable in our dataset is numeric and makes it hard for us to make visualization. For visualization purpose, we will make a new categorical variable called <code>Nodes_level</code>. For lymph nodes tested positive, the usual medical way of classifying the severity would be:<code>N0</code> for no positive nodes; <code>N1</code> for 1-3 positive nodes; <code>N2</code> for 4-9 positive nodes; and <code>N3</code> for more than 10 nodes. We will follow this classification method.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">rotterdam &lt;-<span class="st"> </span>rotterdam <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb4-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Nodes_level =</span> <span class="kw">ifelse</span>(nodes <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="st">&quot;N0&quot;</span>, </a>
-<a class="sourceLine" id="cb4-3" title="3">                              <span class="kw">ifelse</span>(nodes <span class="op">&gt;=</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>nodes <span class="op">&lt;=</span><span class="st"> </span><span class="dv">3</span>, <span class="st">&quot;N1&quot;</span>, </a>
-<a class="sourceLine" id="cb4-4" title="4">                                     <span class="kw">ifelse</span>(nodes <span class="op">&gt;=</span><span class="st"> </span><span class="dv">4</span> <span class="op">&amp;</span><span class="st"> </span>nodes <span class="op">&lt;=</span><span class="st"> </span><span class="dv">9</span>, <span class="st">&quot;N2&quot;</span>, </a>
-<a class="sourceLine" id="cb4-5" title="5">                                            <span class="kw">ifelse</span>(nodes <span class="op">&gt;=</span><span class="st"> </span><span class="dv">10</span>, <span class="st">&quot;N3&quot;</span>, <span class="ot">NaN</span>)))))</a>
+<a class="sourceLine" id="cb4-3" title="3">                       <span class="kw">ifelse</span>(nodes <span class="op">&gt;=</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>nodes <span class="op">&lt;=</span><span class="st"> </span><span class="dv">3</span>, <span class="st">&quot;N1&quot;</span>, </a>
+<a class="sourceLine" id="cb4-4" title="4">                       <span class="kw">ifelse</span>(nodes <span class="op">&gt;=</span><span class="st"> </span><span class="dv">4</span> <span class="op">&amp;</span><span class="st"> </span>nodes <span class="op">&lt;=</span><span class="st"> </span><span class="dv">9</span>, <span class="st">&quot;N2&quot;</span>, </a>
+<a class="sourceLine" id="cb4-5" title="5">                       <span class="kw">ifelse</span>(nodes <span class="op">&gt;=</span><span class="st"> </span><span class="dv">10</span>, <span class="st">&quot;N3&quot;</span>, <span class="ot">NaN</span>)))))</a>
 <a class="sourceLine" id="cb4-6" title="6">rotterdam <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb4-7" title="7"><span class="st">  </span><span class="kw">group_by</span>(Nodes_level) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb4-8" title="8"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">number =</span> <span class="kw">n</span>(), <span class="dt">.groups =</span> <span class="st">&#39;drop&#39;</span>)</a></code></pre></div>
@@ -208,6 +216,13 @@ img {
 <a class="sourceLine" id="cb7-3" title="3">                     <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Hormon&quot;</span>, </a>
 <a class="sourceLine" id="cb7-4" title="4">                     <span class="kw">ifelse</span>(chemo <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>hormon <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Both&quot;</span>, <span class="st">&quot;NaN/Other Treatment&quot;</span>)))) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb7-5" title="5"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Treatment =</span> <span class="kw">as.factor</span>(Treatment))</a></code></pre></div>
+<p>Note that in this manner as we try to ‘merge’ two binary variables into one variable with four levels, we are assuming interaction between <code>chemo</code> and <code>hormon</code>.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">rotterdam_recur &lt;-<span class="st"> </span>rotterdam <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="st">  </span><span class="kw">filter</span>(recur <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">drecurtime =</span> dtime<span class="op">-</span>rtime)</a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="kw">nrow</span>(rotterdam_recur)</a></code></pre></div>
+<pre><code>## [1] 1518</code></pre>
+<p>We also thought it would be of interest to invesigate how recurrnce of tumor might affect the survival of the patient. We made a new dataset called <code>rotterdam_recur</code>, which only include patients with <code>recur</code> = 1. Now the dataset contains 1518 data points, a little over the original <code>rotterdam</code> dataset. We will label the time from recurrence to death as <code>drecurtime</code> in the new data frame.</p>
 </div>
 <p style="text-align: center;">
 <a href="2-1-loading-data.html"><button class="btn btn-default">Previous</button></a>

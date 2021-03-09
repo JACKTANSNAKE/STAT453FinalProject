@@ -7,3 +7,5 @@
 * “Breast Cancer Survival Statistics.” Cancer Research UK, 22 Jan. 2021, www.cancerresearchuk.org/health-professional/cancer-statistics/statistics-by-cancer-type/breast-cancer/survival#heading-Zero.
 
 * “Cancer.” World Health Organization, World Health Organization, www.who.int/news-room/fact-sheets/detail/cancer.
+
+* Martin, Laura J. “Breast Cancer: What Are the Survival Rates?” WebMD, WebMD, 13 May 2020, www.webmd.com/breast-cancer/guide/breast-cancer-survival-rates#:~:text=The 10-year breast cancer,are alive after 10 years).

@@ -1,9 +1,4 @@
----
-title: "04_Regression"
-author: "JACKTANSNAKE"
-date: "2021/3/8"
-output: html_document
----
+# Prediction
 
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
 library(survival)
@@ -14,12 +9,45 @@ library(hrbrthemes)
 library(viridis)
 library(ranger)
 library(randomForestSRC)
+library(LTRCtrees)
+library(rpart.plot)
 ```
 
-## Loading Data
-```{r}
+Another point of interest might be how could we predict a patients survival based on some of his diagnostics and treatment record? In order to do this, we will have to fit models(parametric/ nonparametric) and generate metric of some sort based on predictions using the model.
+
+```{r, include = FALSE}
 data(rotterdam)
 ```
+
+## Non-parametric methods
+
+### LRTtrees
+
+```{r}
+rotterdam <- rotterdam %>%
+  mutate(start = 0)
+
+n <- nrow(rotterdam)
+rotterdam_prediction <- rotterdam[sample(n),] # shuffle row-wise
+rotterdam.train = rotterdam[floor(1:(n * 0.8)),]
+rotterdam.test = rotterdam[ceiling((n * 0.8)):n,]
+rotterdam.test.new <- rotterdam.test %>%
+  select(nodes, Treatment, dtime, death, size, age)
+```
+
+```{r}
+LTRCART.obj <- LTRCART(Surv(start, dtime, death) ~ age, rotterdam.train)
+LTRCIT.obj <- LTRCIT(Surv(start, dtime, death) ~ age, rotterdam.train)
+```
+
+```{r}
+prp(LTRCART.obj, type = 0, roundint=FALSE)
+
+## Plot the fitted LTRCIT tree
+plot(LTRCIT.obj)
+```
+
+### Random Survival Forest
 
 ```{r}
 # cross validation, stratified on status variable to ensure that  each group (here censored, dead)
@@ -28,7 +56,6 @@ folds <- 2 # for <nfold> cross-validation
 cvIndex <- createFolds(factor(rotterdam$death), folds, returnTrain = T)
 ```
 
-# 2 model, training
 ```{r}
 # create some containers to store results
 # (not reasonable for big models, for big models you may want so store intermediate results on disk)
@@ -43,7 +70,7 @@ for(i in 1:length(cvIndex)) {
   eval_data <- rotterdam[-cvIndex[[i]],]
   
   # train
-  rsf <- ranger(Surv(time = dtime, event = death) ~ ., data = train_data)
+  rsf <- ranger(Surv(time = dtime, event = death) ~ age + Treatment + size + nodes, data = train_data)
   
   # predict (on hold out test set)
   pred <- predict(rsf, eval_data)
@@ -59,38 +86,16 @@ show some model summaries
 container_model
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## Parametric methods
 
 ```{r}
-# Sample the data and create a training subset.
-train <- sample(1:nrow(rotterdam), round(nrow(rotterdam) * 0.80))
-# Train the model.
-rotterdam.grow <- rfsrc(Surv(dtime_Years, death) ~ size + nodes + Treatment, rotterdam[train, ], ntree = 100)
-# Test the model.
-rotterdam.pred <- predict(rotterdam.grow, rotterdam[-train , ])
-# Compare the results.
-print(rotterdam.grow)
-print(rotterdam.pred)
+Lognormal <- survreg(Surv(dtime, death) ~ age + nodes + size + Treatment, dist = "lognormal", data = rotterdam.train)
+predicted <- predict(Lognormal, newdata = rotterdam.test.new)
+predicted
 ```
 
 ```{r}
-test_case = data.frame(age = 25, size = "20-50", Treatment = "Chemo", nodes = 5)
-predict(rotterdam.grow, test_case)
+MAE(rotterdam.test$dtime, predicted)
 ```
 
 

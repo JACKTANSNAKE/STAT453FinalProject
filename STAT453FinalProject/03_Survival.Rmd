@@ -23,7 +23,9 @@ rotterdam <- rotterdam %>%
                        ifelse(nodes >= 4 & nodes <= 9, "N2", 
                        ifelse(nodes >= 10, "N3", NaN)))))
 rotterdam <- rotterdam %>%
-  mutate(grade = as.factor(grade))
+  mutate(grade = as.factor(grade)) %>%
+  mutate(size = as.factor(size)) %>%
+  mutate(Treatment = as.factor(Treatment))
 rotterdam_recur <- rotterdam %>%
   filter(recur == 1) %>%
   mutate(drecurtime = dtime-rtime)
@@ -179,6 +181,8 @@ Another point that we are going to explore is if we would be able to fit our dat
 
 To do so, we will begin by checking if any of Exponential, Weibull, or Log-normal distribution would be adequate parametric assumption to cast on our data. We will verify the adequacy by checking the Cox-Snell residual plot. We will be fitting models using variables: `Treatment`, `size`, `nodes`, `age`(We have shown in Chapter 2 that age is a confounder for categories in Treatment).
 
+### User-defined Cox-Snell function
+
 ```{r}
 # The Cox-Snell function takes as inputs
 # 1. A vector of Cox-Snell residuals created by the user based on the model being evaluated,
@@ -196,11 +200,54 @@ abline(0,1,col='red')
 }
 ```
 
-Log-normal model:
+### Exponential models
+
+We will begin by verifying the adequacy of Exponential model.
+
+```{r}
+Dexp <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + age, dist='exponential', data=rotterdam)
+Dexp
+```
+
+![](Cox-Snell/DexpDeath.png)
+
+```{r}
+Dexp <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + age, dist='exponential', data=rotterdam)
+Dexp
+```
+
+![](Cox-Snell/DexpRecur.png)
+
+The Exponential does not seem adequate in this case.
+
+### Weibull models
+
+Next we will examine the adequacy of Weibull model.
+
+```{r}
+Dweibull <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + age, dist='weibull', data=rotterdam)
+Dweibull
+```
+
+![](Cox-Snell/DweibullDeath.png)
+
+```{r}
+Dweibull <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + age, dist='weibull', data=rotterdam)
+Dweibull
+```
+
+![](Cox-Snell/DweibullRecur.png)
+
+The Weibull model is still not adequate.
+
+### Log-normal models
+
+Finally, we will examine the adequacy of Log-normal model.
+
 ```{r}
 Dlnorm <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + age , dist='lognormal', data=rotterdam)
 Dlnorm
-CS_Death <- -log(1 - plnorm(rotterdam$dtime, 9.709442268-0.431016329*(rotterdam$Treatment=="Chemo")
+CS_LnormD <- -log(1 - plnorm(rotterdam$dtime, 9.709442268-0.431016329*(rotterdam$Treatment=="Chemo")
                                                   -0.346351742*(rotterdam$Treatment=="Hormon")  
                                                   -0.423626557*(rotterdam$Treatment=="NaN/Other Treatment")
                                                   -0.372703559*(rotterdam$size=="20-50")
@@ -209,13 +256,13 @@ CS_Death <- -log(1 - plnorm(rotterdam$dtime, 9.709442268-0.431016329*(rotterdam$
                                                   -0.009903862*rotterdam$age, 
                                        1.077329))
 # Make appropriate graph using CoxSnell function
-CoxSnell(CS_Death, rotterdam$death)
+CoxSnell(CS_LnormD, rotterdam$death)
 ```
 
 ```{r}
 Rlnorm <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + age, dist='lognormal', data=rotterdam)
 Rlnorm
-CS_Recur <- -log(1 - plnorm(rotterdam$rtime, 8.514204484-0.382172447*(rotterdam$Treatment=="Chemo")
+CS_LnormR <- -log(1 - plnorm(rotterdam$rtime, 8.514204484-0.382172447*(rotterdam$Treatment=="Chemo")
                                                   -0.479063703*(rotterdam$Treatment=="Hormon")   
                                                   -0.605193863*(rotterdam$Treatment=="NaN/Other Treatment")
                                                   -0.458345796*(rotterdam$size=="20-50")
@@ -225,32 +272,40 @@ CS_Recur <- -log(1 - plnorm(rotterdam$rtime, 8.514204484-0.382172447*(rotterdam$
                                        1.340545))
 
 # Make appropriate graph using CoxSnell function
-CoxSnell(CS_Recur, rotterdam$recur)
+CoxSnell(CS_LnormR, rotterdam$recur)
 ```
 
 We could see that the Log-normal parametric model is an adequate model for both the `dtime` and `rtime` vs. `Treatment` + `size` + `nodes` + `age`.
 
+TODO: why log-normal fit.
 
+TODO: explain why age in `rtime` models is positive: competing risks.
 
 
 ## Cox-PH model:
 
 ```{r}
-m_death = coxph(Surv(dtime, death) ~ Treatment + size + nodes + age, data=rotterdam)
-m_death
+m_death_withage = coxph(Surv(dtime, death) ~ Treatment + size + nodes + age, data=rotterdam)
+m_death_withage
+cox.zph(m_death_withage)
 ```
 
 ```{r}
-cox.zph(m_death)
+m_death_strataage = coxph(Surv(dtime, death) ~ Treatment + size + nodes + strata(age), data=rotterdam)
+m_death_strataage
+cox.zph(m_death_strataage)
 ```
 
 
 ```{r}
 m_recur = coxph(Surv(rtime, recur) ~ Treatment + size + nodes + age, data=rotterdam)
 m_recur
+cox.zph(m_recur)
 ```
 
 ```{r}
+m_recur = coxph(Surv(rtime, recur) ~ Treatment + size + nodes + strata(age), data=rotterdam)
+m_recur
 cox.zph(m_recur)
 ```
 
