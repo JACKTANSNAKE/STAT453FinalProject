@@ -250,6 +250,19 @@ The Weibull model is still not adequate.
 Finally, we will examine the adequacy of Log-normal model.
 
 ```{r}
+Dlnorm <- survreg(Surv(dtime, death) ~ 1 , dist='lognormal', data=rotterdam)
+Dlnorm
+DLweibull <- survreg(Surv(dtime, death) ~ 1 , dist='weibull', data=rotterdam)
+DLweibull
+CS_LnormD <- -log(1 - plnorm(rotterdam$dtime,  8.318665, 1.206342))
+CS_WeibullD <- -log(1 - pweibull(rotterdam$dtime,  1/0.7977553, exp(8.577572)))
+# Make appropriate graph using CoxSnell function
+CoxSnell(CS_LnormD, rotterdam$death)
+CoxSnell(CS_WeibullD, rotterdam$death)
+```
+
+
+```{r}
 Dlnorm <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + age , dist='lognormal', data=rotterdam)
 Dlnorm
 CS_LnormD <- -log(1 - plnorm(rotterdam$dtime, 9.709442268-0.431016329*(rotterdam$Treatment=="Chemo")
@@ -284,11 +297,13 @@ We could see that the Log-normal parametric model is an adequate model for both 
 
 TODO: why log-normal fit.
 
+cumulative hazard?
 
 ```{r}
 library(bshazard)
-fit <- bshazard(Surv(dtime, death) ~ 1,data=rotterdam)
-plot(fit)
+fit <- bshazard(Surv(dtime, death) ~ 1, data=rotterdam)
+KM <- survfit(Surv(dtime, death) ~ 1, data=rotterdam)
+plot(fit, conf.int = FALSE)
 ```
 
 ```{r}
@@ -333,6 +348,13 @@ m_death_withage = coxph(Surv(dtime, death) ~ Treatment + size + nodes + age, dat
 m_death_withage
 cox.zph(m_death_withage)
 ```
+
+```{r}
+new = data.frame(Treatment = "Both", size = "<=20", nodes=0, age=0)
+plot(survfit(m_death_withage, newdata = new),fun="cumhaz", conf.int = FALSE, ylim = c(0,0.25))
+abline(0, 0.1/4000, col="blue")
+```
+
 
 ```{r}
 m_death_strataage = coxph(Surv(dtime, death) ~ Treatment + size + nodes + strata(age), data=rotterdam)
