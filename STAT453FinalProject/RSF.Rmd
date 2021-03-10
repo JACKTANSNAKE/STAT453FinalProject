@@ -19,6 +19,30 @@ Another point of interest might be how could we predict a patients survival base
 data(rotterdam)
 ```
 
+```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+rotterdam <- rotterdam %>%
+  mutate(Treatment = ifelse(chemo == 1 & hormon == 0, "Chemo", 
+                     ifelse(chemo == 0 & hormon == 1, "Hormon", 
+                     ifelse(chemo == 1 & hormon == 1, "Both", "NaN/Other Treatment")))) %>% 
+  mutate(Treatment = as.factor(Treatment))
+
+rotterdam <- rotterdam %>% 
+  mutate(Nodes_level = ifelse(nodes == 0, "N0", 
+                       ifelse(nodes >= 1 & nodes <= 3, "N1", 
+                       ifelse(nodes >= 4 & nodes <= 9, "N2", 
+                       ifelse(nodes >= 10, "N3", NaN))))) %>% 
+  mutate(Treatment = as.factor(Treatment))
+
+rotterdam <- rotterdam %>%
+  mutate(grade = as.factor(grade)) %>%
+  mutate(size = as.factor(size)) %>%
+  mutate(Treatment = as.factor(Treatment))
+
+rotterdam_recur <- rotterdam %>%
+  filter(recur == 1) %>%
+  mutate(drecurtime = dtime-rtime)
+```
+
 ## Non-parametric methods
 
 ### LRTtrees
@@ -97,5 +121,37 @@ predicted
 ```{r}
 MAE(rotterdam.test$dtime, predicted)
 ```
+
+
+
+
+
+
+
+```{r}
+# Sample the data and create a training subset.
+train <- sample(1:nrow(rotterdam), round(nrow(rotterdam) * 0.80))
+# Train the model.
+rotterdam.grow <- rfsrc(Surv(dtime, death) ~ Treatment + size + nodes + age, rotterdam[train, ], ntree = 100)
+# Test the model.
+rotterdam.pred <- predict(rotterdam.grow, rotterdam[-train , ])
+# Compare the results.
+print(rotterdam.grow)
+print(rotterdam.pred)
+```
+
+```{r}
+levels(rotterdam$Treatment)
+levels(rotterdam$size)
+```
+
+```{r}
+treatment <- factor(levels(rotterdam$Treatment))
+size <- factor(levels(rotterdam$size))
+
+test_case <- data.frame(Treatment = treatment[2], size = size[2], nodes=5, age=56)
+predict(rotterdam.grow, test_case)
+```
+
 
 

@@ -284,7 +284,33 @@ We could see that the Log-normal parametric model is an adequate model for both 
 
 TODO: why log-normal fit.
 
+
+```{r}
+library(bshazard)
+fit <- bshazard(Surv(dtime, death) ~ 1,data=rotterdam)
+plot(fit)
+```
+
+```{r}
+meanlog <- 8.514204484-0.382172447*(rotterdam$Treatment=="Chemo")
+                                                  -0.479063703*(rotterdam$Treatment=="Hormon")   
+                                                  -0.605193863*(rotterdam$Treatment=="NaN/Other Treatment")
+                                                  -0.458345796*(rotterdam$size=="20-50")
+                                                  -0.738657689*(rotterdam$size==">50")
+                                                  -0.107708963*rotterdam$nodes 
+                                                  +0.009059467*rotterdam$age
+sdlog <- 1.340545
+
+hlnorm = function(x,meanlog,sdlog) { dlnorm(x,meanlog=meanlog,sdlog=sdlog)/(1-plnorm(x,meanlog=meanlog,sdlog=sdlog)) }
+plot( hlnorm(rotterdam$rtime,meanlog=meanlog,sdlog=sdlog))
+```
+
+
 TODO: explain why age in `rtime` models is positive: competing risks.
+
+In the `rtime ~ Treatment + size + nodes + age` model, it is surprised to see that the coefficient of `age` is positive, though the value is small. One possible explanation could be the idea of "competing events" and "competing risk".
+
+In this scenario, having recurred breast cancer and being dead could be somewhat "competing events". Though they are not completely "cannot happen on one person at the same time", it is still reasonable to think that for older patients, it is more likely to die from breast cancer or other complications than being cancer-free for years and then having breast cancer recurred; whereas for younger people, the risk of having recurrent breast cancer could be higher than being dead from the first breast cancer.
 
 ```{r}
 rotterdam_new <- rotterdam %>% 
@@ -292,10 +318,13 @@ rotterdam_new <- rotterdam %>%
                  ifelse(death == 0 & recur == 1, "recur", 
                  ifelse(death == 1 & recur == 1, "both", "neither"))))
 
-ggplot(rotterdam_new, aes(x=age, color=state)) +
-  geom_density()
+ggplot(rotterdam_new, aes(x=age, color=state, fill=state)) +
+  geom_density(alpha=0.3)
 ```
 
+The plot above also helps verifying the idea. We can find that the group who has been dead during the study but has never had breast cancer recurred (the green one) tends to be older than others.
+
+The positive coefficient of `age` in the log-normal model may seem indicating a protective effect of being old against having breast cancer recurred, but this should not be the true case. It is very likely that this is caused by the competing risk between being dead and having breast cancer recurred for people in different age group. The elderly patients are less likely to suffer from recurrent breast cancer because they are more likely to die from breast cancer or other complications during the treatment after the first diagnosis.
 
 ## Cox-PH model:
 
@@ -319,7 +348,7 @@ cox.zph(m_recur)
 ```
 
 ```{r}
-m_recur = coxph(Surv(rtime, recur) ~ Treatment + size + nodes + strata(age), data=rotterdam)
+m_recur = coxph(Surv(rtime, recur) ~ strata(Treatment) + strata(size) + nodes + age, data=rotterdam)
 m_recur
 cox.zph(m_recur)
 ```
