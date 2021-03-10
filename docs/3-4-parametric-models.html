@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="3.4 Parametric Models | Rotterdam" />
+<meta property="og:type" content="book" />
+
+
+
+
+
+<meta name="author" content="JACK TAN, YIMING MIAO" />
+
+<meta name="date" content="2021-03-09" />
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+
+<meta name="description" content="3.4 Parametric Models | Rotterdam">
+
+<title>3.4 Parametric Models | Rotterdam</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<link rel="stylesheet" href="toc.css" type="text/css" />
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container-fluid main-container">
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul>
+<li class="has-sub"><a href="index.html#motivation"><span class="toc-section-number">1</span> Motivation</a><ul>
+<li><a href="1-1-some-background-information.html#some-background-information"><span class="toc-section-number">1.1</span> Some Background Information</a></li>
+</ul></li>
+<li class="has-sub"><a href="2-data-exploration.html#data-exploration"><span class="toc-section-number">2</span> Data Exploration</a><ul>
+<li><a href="2-1-loading-data.html#loading-data"><span class="toc-section-number">2.1</span> Loading Data</a></li>
+<li><a href="2-2-data-wrangling.html#data-wrangling"><span class="toc-section-number">2.2</span> Data Wrangling</a></li>
+<li class="has-sub"><a href="2-3-data-visualizations-and-exploration.html#data-visualizations-and-exploration"><span class="toc-section-number">2.3</span> Data visualizations and exploration</a><ul>
+<li><a href="2-3-data-visualizations-and-exploration.html#diagnostics-vs.-survival-times"><span class="toc-section-number">2.3.1</span> Diagnostics vs. Survival Times</a></li>
+<li><a href="2-3-data-visualizations-and-exploration.html#treatment-vs.-survival-times"><span class="toc-section-number">2.3.2</span> Treatment vs. Survival Times</a></li>
+<li><a href="2-3-data-visualizations-and-exploration.html#age-treatment-vs.-survival-times"><span class="toc-section-number">2.3.3</span> <code>age</code> + <code>Treatment</code> vs. Survival Times</a></li>
+<li><a href="2-3-data-visualizations-and-exploration.html#general-x-year-survival-rate"><span class="toc-section-number">2.3.4</span> General X-year Survival Rate</a></li>
+</ul></li>
+</ul></li>
+<li class="has-sub"><a href="3-survival.html#survival"><span class="toc-section-number">3</span> Survival</a><ul>
+<li><a href="3-1-loading-data-1.html#loading-data-1"><span class="toc-section-number">3.1</span> Loading Data</a></li>
+<li><a href="3-2-kaplan-miere-estimator-of-the-entire-dataset.html#kaplan-miere-estimator-of-the-entire-dataset"><span class="toc-section-number">3.2</span> Kaplan-Miere estimator of the entire dataset</a></li>
+<li class="has-sub"><a href="3-3-kaplan-miere-estimator-on-different-variables-in-rotterdam.html#kaplan-miere-estimator-on-different-variables-in-rotterdam"><span class="toc-section-number">3.3</span> Kaplan-Miere estimator on different variables in <code>rotterdam</code></a><ul>
+<li><a href="3-3-kaplan-miere-estimator-on-different-variables-in-rotterdam.html#size-vs.-survival-times"><span class="toc-section-number">3.3.1</span> <code>size</code> vs. Survival Times</a></li>
+<li><a href="3-3-kaplan-miere-estimator-on-different-variables-in-rotterdam.html#nodes_level-vs.-survival-times"><span class="toc-section-number">3.3.2</span> <code>Nodes_level</code> vs. Survival Times</a></li>
+<li><a href="3-3-kaplan-miere-estimator-on-different-variables-in-rotterdam.html#treatment-vs.-survival-times-1"><span class="toc-section-number">3.3.3</span> <code>Treatment</code> vs. Survival Times</a></li>
+</ul></li>
+<li class="has-sub"><a href="3-4-parametric-models.html#parametric-models"><span class="toc-section-number">3.4</span> Parametric Models</a><ul>
+<li><a href="3-4-parametric-models.html#user-defined-cox-snell-function"><span class="toc-section-number">3.4.1</span> User-defined Cox-Snell function</a></li>
+<li><a href="3-4-parametric-models.html#exponential-models"><span class="toc-section-number">3.4.2</span> Exponential models</a></li>
+<li><a href="3-4-parametric-models.html#weibull-models"><span class="toc-section-number">3.4.3</span> Weibull models</a></li>
+<li><a href="3-4-parametric-models.html#log-normal-models"><span class="toc-section-number">3.4.4</span> Log-normal models</a></li>
+</ul></li>
+<li><a href="3-5-cox-ph-model.html#cox-ph-model"><span class="toc-section-number">3.5</span> Cox-PH model:</a></li>
+</ul></li>
+<li><a href="4-reference.html#reference"><span class="toc-section-number">4</span> Reference</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="parametric-models" class="section level2">
+<h2><span class="header-section-number">3.4</span> Parametric Models</h2>
+<p>Another point that we are going to explore is if we would be able to fit our data to a parametric model. This matters since if we could fit any parametric model, then we should have a model good enough to generate predictions of breast cancer patients' survival and would have nice and interpretable coefficients to work with.</p>
+<p>To do so, we will begin by checking if any of Exponential, Weibull, or Log-normal distribution would be adequate parametric assumption to cast on our data. We will verify the adequacy by checking the Cox-Snell residual plot. We will be fitting models using variables: <code>Treatment</code>, <code>size</code>, <code>nodes</code>, <code>age</code>(We have shown in Chapter 2 that age is a confounder for categories in Treatment).</p>
+<div id="user-defined-cox-snell-function" class="section level3">
+<h3><span class="header-section-number">3.4.1</span> User-defined Cox-Snell function</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The Cox-Snell function takes as inputs</span>
+<span class="co"># 1. A vector of Cox-Snell residuals created by the user based on the model being evaluated,</span>
+<span class="co"># 2. A status vector</span>
+<span class="co"># 3. Optional x- and y- limits for the resulting plot</span>
+
+CoxSnell =<span class="st"> </span><span class="cf">function</span>(cs,status,<span class="dt">xlim=</span><span class="ot">NULL</span>,<span class="dt">ylim=</span><span class="ot">NULL</span>)
+{
+kmcs =<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(<span class="kw">jitter</span>(cs,<span class="dt">amount=</span>(<span class="kw">max</span>(cs)<span class="op">-</span><span class="kw">min</span>(cs))<span class="op">/</span><span class="dv">1000</span>),status) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>)<span class="op">$</span>surv
+
+<span class="kw">plot</span>(<span class="kw">log</span>(<span class="op">-</span><span class="kw">log</span>(kmcs)) <span class="op">~</span><span class="st"> </span><span class="kw">sort</span>(<span class="kw">log</span>(cs)) ,
+      <span class="dt">xlab=</span><span class="st">&quot;log(Cox-Snell)&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;log(-log(S(Cox-Snell)))&quot;</span>, <span class="dt">xlim=</span>xlim, <span class="dt">ylim=</span>ylim )
+
+<span class="kw">abline</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dt">col=</span><span class="st">&#39;red&#39;</span>)
+}</code></pre></div>
+</div>
+<div id="exponential-models" class="section level3">
+<h3><span class="header-section-number">3.4.2</span> Exponential models</h3>
+<p>We will begin by verifying the adequacy of Exponential model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Dexp &lt;-<span class="st"> </span><span class="kw">survreg</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age, <span class="dt">dist=</span><span class="st">&#39;exponential&#39;</span>, <span class="dt">data=</span>rotterdam)
+Dexp</code></pre></div>
+<pre><code>## Call:
+## survreg(formula = Surv(dtime, death) ~ Treatment + size + nodes + 
+##     age, data = rotterdam, dist = &quot;exponential&quot;)
+## 
+## Coefficients:
+##                  (Intercept)               TreatmentChemo 
+##                  10.49678202                  -0.51997169 
+##              TreatmentHormon TreatmentNaN/Other Treatment 
+##                  -0.44961578                  -0.46574886 
+##                    size20-50                      size&gt;50 
+##                  -0.46803053                  -0.81548193 
+##                        nodes                          age 
+##                  -0.06997150                  -0.01412165 
+## 
+## Scale fixed at 1 
+## 
+## Loglik(model)= -12137   Loglik(intercept only)= -12360.4
+##  Chisq= 446.94 on 7 degrees of freedom, p= &lt;2e-16 
+## n= 2982</code></pre>
+<div class="figure">
+<img src="Cox-Snell/DexpDeath.png" />
+
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Dexp &lt;-<span class="st"> </span><span class="kw">survreg</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age, <span class="dt">dist=</span><span class="st">&#39;exponential&#39;</span>, <span class="dt">data=</span>rotterdam)
+Dexp</code></pre></div>
+<pre><code>## Call:
+## survreg(formula = Surv(rtime, recur) ~ Treatment + size + nodes + 
+##     age, data = rotterdam, dist = &quot;exponential&quot;)
+## 
+## Coefficients:
+##                  (Intercept)               TreatmentChemo 
+##                  8.818707424                 -0.372797596 
+##              TreatmentHormon TreatmentNaN/Other Treatment 
+##                 -0.536512833                 -0.490056002 
+##                    size20-50                      size&gt;50 
+##                 -0.404626936                 -0.719554358 
+##                        nodes                          age 
+##                 -0.082728526                  0.008130282 
+## 
+## Scale fixed at 1 
+## 
+## Loglik(model)= -13917.5   Loglik(intercept only)= -14153.7
+##  Chisq= 472.4 on 7 degrees of freedom, p= &lt;2e-16 
+## n= 2982</code></pre>
+<div class="figure">
+<img src="Cox-Snell/DexpRecur.png" />
+
+</div>
+<p>The Exponential does not seem adequate in this case.</p>
+</div>
+<div id="weibull-models" class="section level3">
+<h3><span class="header-section-number">3.4.3</span> Weibull models</h3>
+<p>Next we will examine the adequacy of Weibull model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Dweibull &lt;-<span class="st"> </span><span class="kw">survreg</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age, <span class="dt">dist=</span><span class="st">&#39;weibull&#39;</span>, <span class="dt">data=</span>rotterdam)
+Dweibull</code></pre></div>
+<pre><code>## Call:
+## survreg(formula = Surv(dtime, death) ~ Treatment + size + nodes + 
+##     age, data = rotterdam, dist = &quot;weibull&quot;)
+## 
+## Coefficients:
+##                  (Intercept)               TreatmentChemo 
+##                   9.93741760                  -0.40097983 
+##              TreatmentHormon TreatmentNaN/Other Treatment 
+##                  -0.40778590                  -0.36210464 
+##                    size20-50                      size&gt;50 
+##                  -0.35546640                  -0.65448317 
+##                        nodes                          age 
+##                  -0.05589248                  -0.01125732 
+## 
+## Scale= 0.739963 
+## 
+## Loglik(model)= -12068.9   Loglik(intercept only)= -12322.7
+##  Chisq= 507.49 on 7 degrees of freedom, p= &lt;2e-16 
+## n= 2982</code></pre>
+<div class="figure">
+<img src="Cox-Snell/DweibullDeath.png" />
+
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Dweibull &lt;-<span class="st"> </span><span class="kw">survreg</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age, <span class="dt">dist=</span><span class="st">&#39;weibull&#39;</span>, <span class="dt">data=</span>rotterdam)
+Dweibull</code></pre></div>
+<pre><code>## Call:
+## survreg(formula = Surv(rtime, recur) ~ Treatment + size + nodes + 
+##     age, data = rotterdam, dist = &quot;weibull&quot;)
+## 
+## Coefficients:
+##                  (Intercept)               TreatmentChemo 
+##                  8.830213089                 -0.376480833 
+##              TreatmentHormon TreatmentNaN/Other Treatment 
+##                 -0.539278367                 -0.495766112 
+##                    size20-50                      size&gt;50 
+##                 -0.410910817                 -0.727355688 
+##                        nodes                          age 
+##                 -0.083786844                  0.008292188 
+## 
+## Scale= 1.018498 
+## 
+## Loglik(model)= -13917.1   Loglik(intercept only)= -14145.7
+##  Chisq= 457.19 on 7 degrees of freedom, p= &lt;2e-16 
+## n= 2982</code></pre>
+<div class="figure">
+<img src="Cox-Snell/DweibullRecur.png" />
+
+</div>
+<p>The Weibull model is still not adequate.</p>
+</div>
+<div id="log-normal-models" class="section level3">
+<h3><span class="header-section-number">3.4.4</span> Log-normal models</h3>
+<p>Finally, we will examine the adequacy of Log-normal model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Dlnorm &lt;-<span class="st"> </span><span class="kw">survreg</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age , <span class="dt">dist=</span><span class="st">&#39;lognormal&#39;</span>, <span class="dt">data=</span>rotterdam)
+Dlnorm</code></pre></div>
+<pre><code>## Call:
+## survreg(formula = Surv(dtime, death) ~ Treatment + size + nodes + 
+##     age, data = rotterdam, dist = &quot;lognormal&quot;)
+## 
+## Coefficients:
+##                  (Intercept)               TreatmentChemo 
+##                  9.709442268                 -0.431016329 
+##              TreatmentHormon TreatmentNaN/Other Treatment 
+##                 -0.346351742                 -0.423626557 
+##                    size20-50                      size&gt;50 
+##                 -0.372703559                 -0.654189313 
+##                        nodes                          age 
+##                 -0.079103425                 -0.009903862 
+## 
+## Scale= 1.077329 
+## 
+## Loglik(model)= -12034.1   Loglik(intercept only)= -12286.5
+##  Chisq= 504.67 on 7 degrees of freedom, p= &lt;2e-16 
+## n= 2982</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CS_LnormD &lt;-<span class="st"> </span><span class="op">-</span><span class="kw">log</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span><span class="kw">plnorm</span>(rotterdam<span class="op">$</span>dtime, <span class="fl">9.709442268</span><span class="op">-</span><span class="fl">0.431016329</span><span class="op">*</span>(rotterdam<span class="op">$</span>Treatment<span class="op">==</span><span class="st">&quot;Chemo&quot;</span>)
+                                                  <span class="op">-</span><span class="fl">0.346351742</span><span class="op">*</span>(rotterdam<span class="op">$</span>Treatment<span class="op">==</span><span class="st">&quot;Hormon&quot;</span>)  
+                                                  <span class="op">-</span><span class="fl">0.423626557</span><span class="op">*</span>(rotterdam<span class="op">$</span>Treatment<span class="op">==</span><span class="st">&quot;NaN/Other Treatment&quot;</span>)
+                                                  <span class="op">-</span><span class="fl">0.372703559</span><span class="op">*</span>(rotterdam<span class="op">$</span>size<span class="op">==</span><span class="st">&quot;20-50&quot;</span>)
+                                                  <span class="op">-</span><span class="fl">0.654189313</span><span class="op">*</span>(rotterdam<span class="op">$</span>size<span class="op">==</span><span class="st">&quot;&gt;50&quot;</span>)
+                                                  <span class="op">-</span><span class="fl">0.079103425</span><span class="op">*</span>rotterdam<span class="op">$</span>nodes 
+                                                  <span class="op">-</span><span class="fl">0.009903862</span><span class="op">*</span>rotterdam<span class="op">$</span>age, 
+                                       <span class="fl">1.077329</span>))
+<span class="co"># Make appropriate graph using CoxSnell function</span>
+<span class="kw">CoxSnell</span>(CS_LnormD, rotterdam<span class="op">$</span>death)</code></pre></div>
+<p><img src="Rotterdam_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Rlnorm &lt;-<span class="st"> </span><span class="kw">survreg</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age, <span class="dt">dist=</span><span class="st">&#39;lognormal&#39;</span>, <span class="dt">data=</span>rotterdam)
+Rlnorm</code></pre></div>
+<pre><code>## Call:
+## survreg(formula = Surv(rtime, recur) ~ Treatment + size + nodes + 
+##     age, data = rotterdam, dist = &quot;lognormal&quot;)
+## 
+## Coefficients:
+##                  (Intercept)               TreatmentChemo 
+##                  8.514204484                 -0.382172447 
+##              TreatmentHormon TreatmentNaN/Other Treatment 
+##                 -0.479063703                 -0.605193863 
+##                    size20-50                      size&gt;50 
+##                 -0.458345796                 -0.738657689 
+##                        nodes                          age 
+##                 -0.107708963                  0.009059467 
+## 
+## Scale= 1.340545 
+## 
+## Loglik(model)= -13803.8   Loglik(intercept only)= -14045.8
+##  Chisq= 483.94 on 7 degrees of freedom, p= &lt;2e-16 
+## n= 2982</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CS_LnormR &lt;-<span class="st"> </span><span class="op">-</span><span class="kw">log</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span><span class="kw">plnorm</span>(rotterdam<span class="op">$</span>rtime, <span class="fl">8.514204484</span><span class="op">-</span><span class="fl">0.382172447</span><span class="op">*</span>(rotterdam<span class="op">$</span>Treatment<span class="op">==</span><span class="st">&quot;Chemo&quot;</span>)
+                                                  <span class="op">-</span><span class="fl">0.479063703</span><span class="op">*</span>(rotterdam<span class="op">$</span>Treatment<span class="op">==</span><span class="st">&quot;Hormon&quot;</span>)   
+                                                  <span class="op">-</span><span class="fl">0.605193863</span><span class="op">*</span>(rotterdam<span class="op">$</span>Treatment<span class="op">==</span><span class="st">&quot;NaN/Other Treatment&quot;</span>)
+                                                  <span class="op">-</span><span class="fl">0.458345796</span><span class="op">*</span>(rotterdam<span class="op">$</span>size<span class="op">==</span><span class="st">&quot;20-50&quot;</span>)
+                                                  <span class="op">-</span><span class="fl">0.738657689</span><span class="op">*</span>(rotterdam<span class="op">$</span>size<span class="op">==</span><span class="st">&quot;&gt;50&quot;</span>)
+                                                  <span class="op">-</span><span class="fl">0.107708963</span><span class="op">*</span>rotterdam<span class="op">$</span>nodes 
+                                                  <span class="op">+</span><span class="fl">0.009059467</span><span class="op">*</span>rotterdam<span class="op">$</span>age, 
+                                       <span class="fl">1.340545</span>))
+
+<span class="co"># Make appropriate graph using CoxSnell function</span>
+<span class="kw">CoxSnell</span>(CS_LnormR, rotterdam<span class="op">$</span>recur)</code></pre></div>
+<p><img src="Rotterdam_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
+<p>We could see that the Log-normal parametric model is an adequate model for both the <code>dtime</code> and <code>rtime</code> vs. <code>Treatment</code> + <code>size</code> + <code>nodes</code> + <code>age</code>.</p>
+<p>TODO: why log-normal fit.</p>
+<p>TODO: explain why age in <code>rtime</code> models is positive: competing risks.</p>
+</div>
+</div>
+<p style="text-align: center;">
+<a href="3-3-kaplan-miere-estimator-on-different-variables-in-rotterdam.html"><button class="btn btn-default">Previous</button></a>
+<a href="3-5-cox-ph-model.html"><button class="btn btn-default">Next</button></a>
+</p>
+</div>
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+</body>
+</html>
