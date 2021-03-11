@@ -320,9 +320,6 @@ hlnorm = function(x,meanlog,sdlog) { dlnorm(x,meanlog=meanlog,sdlog=sdlog)/(1-pl
 plot( hlnorm(rotterdam$rtime,meanlog=meanlog,sdlog=sdlog))
 ```
 
-
-TODO: explain why age in `rtime` models is positive: competing risks.
-
 In the `rtime ~ Treatment + size + nodes + age` model, it is surprised to see that the coefficient of `age` is positive, though the value is small. One possible explanation could be the idea of "competing events" and "competing risk".
 
 In this scenario, having recurred breast cancer and being dead could be somewhat "competing events". Though they are not completely "cannot happen on one person at the same time", it is still reasonable to think that for older patients, it is more likely to die from breast cancer or other complications than being cancer-free for years and then having breast cancer recurred; whereas for younger people, the risk of having recurrent breast cancer could be higher than being dead from the first breast cancer.

@@ -43,6 +43,8 @@ From the description above, we see that there are `size` which stands for the si
 
 ## Data Wrangling
 
+### T(Tumor)N(Node)M(Metastasis)
+
 ```{r}
 rotterdam %>% 
   group_by(size) %>%
@@ -68,6 +70,16 @@ Since the `grade` variable in our dataset is a numeric variable whereas we actua
 rotterdam <- rotterdam %>%
   mutate(grade = as.factor(grade))
 ```
+
+```{r}
+rotterdam %>% 
+  group_by(grade) %>%
+  summarise(number = n(), .groups = 'drop')
+```
+
+In our dataset, we could see that all of the breast cancer patients are located at stage II or stage III breast cancer, which means that the cancer has not started shifting to other parts of the body, which makes the recordance of metastasis information to be impossible. As we will continue using the TNM system mentioned in the previous chapter to conduct our research, we won't be able to measure statistics related to metastasis.
+
+### Treatment
 
 As we were examining through the data, we found that upon the `chemo` variable and the `hormon` variable, there are instances where patients gets both therapy or neither. So in order to explore the relationship between treatment and survival, we introduce a new variable called `Treatment`, using the `chemo` and `hormon` variables.
 
@@ -203,6 +215,24 @@ ggplot(data = rotterdam_new, aes(x = age, y = rtime, color = Treatment)) +
 ```
 
 From the two plots above we could see that the patients who took either chemo therapy or hormon therapy are clearly clusterd. For the group who only took chemotherapy, most patients' `age` are located below 50 years old. For the group who only took hormontherapy, most patients' age are located above 50 years old. This is because chemotherapy might have more negative effects for patients at larger age than hormontherapy and thus would effect survival if the wrong therapy is given. Generally, hormontherapy is more friendly to elder people but chemotherapy has better effect.
+
+### `Treatment` vs. TNM
+
+`Treatment` vs. `size`
+```{r}
+ggplot(data = rotterdam, aes(x = Treatment, fill = size)) + 
+  geom_bar(position = "stack")
+```
+
+We are also interested to see if there are any other factors that would affect a patient's decision on the treatment he/she takes other than his/her age. We thought we could stick with the TNM system and we started with tumor size. Generally, there is no distinction in the treatment taken among different sizes of tumor as we can see from the plot above.
+
+`Treatment` vs. `Nodes_level`
+```{r}
+ggplot(data = rotterdam, aes(x = Treatment, fill = Nodes_level)) + 
+  geom_bar(position = "stack")
+```
+
+This time we are checking if there are difference in `Treatment` with respect to different positive lymph node levels. Now we are onto something interesting. We can see that none of the `N0` patients in our dataset have taken either chemotherapy or hormontherapy. we think that it is possible that chemotherapy and hormontherapy are for severer patients and they might just be "overkill" for mild patients.
 
 ### General X-year Survival Rate
 
