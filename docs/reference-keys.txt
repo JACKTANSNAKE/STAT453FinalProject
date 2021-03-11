@@ -3,10 +3,13 @@ some-background-information
 data-exploration
 loading-data
 data-wrangling
+ttumornnodemmetastasis
+treatment
 data-visualizations-and-exploration
 diagnostics-vs.-survival-times
 treatment-vs.-survival-times
 age-treatment-vs.-survival-times
+treatment-vs.-tnm
 general-x-year-survival-rate
 survival
 loading-data-1
@@ -21,4 +24,6 @@ exponential-models
 weibull-models
 log-normal-models
 cox-ph-model
+conclusion
+limitation
 reference

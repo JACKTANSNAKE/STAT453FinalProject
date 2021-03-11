@@ -13,4 +13,4 @@ RnwWeave: Sweave
 LaTeX: XeLaTeX
 
 BuildType: Website
-WebsitePath: ~/Desktop/undergraduate/Macalester/2021spring/survival/STAT453FinalProject/STAT453FinalProject
+WebsitePath: ~/2020research/STAT453FinalProject

@@ -299,12 +299,12 @@ TODO: why log-normal fit.
 
 cumulative hazard?
 
-```{r}
+#```{r}
 library(bshazard)
 fit <- bshazard(Surv(dtime, death) ~ 1, data=rotterdam)
 KM <- survfit(Surv(dtime, death) ~ 1, data=rotterdam)
 plot(fit, conf.int = FALSE)
-```
+#```
 
 ```{r}
 meanlog <- 8.514204484-0.382172447*(rotterdam$Treatment=="Chemo")
