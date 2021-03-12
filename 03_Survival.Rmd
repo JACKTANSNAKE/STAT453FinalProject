@@ -250,19 +250,6 @@ The Weibull model is still not adequate.
 Finally, we will examine the adequacy of Log-normal model.
 
 ```{r}
-Dlnorm <- survreg(Surv(dtime, death) ~ 1 , dist='lognormal', data=rotterdam)
-Dlnorm
-DLweibull <- survreg(Surv(dtime, death) ~ 1 , dist='weibull', data=rotterdam)
-DLweibull
-CS_LnormD <- -log(1 - plnorm(rotterdam$dtime,  8.318665, 1.206342))
-CS_WeibullD <- -log(1 - pweibull(rotterdam$dtime,  1/0.7977553, exp(8.577572)))
-# Make appropriate graph using CoxSnell function
-CoxSnell(CS_LnormD, rotterdam$death)
-CoxSnell(CS_WeibullD, rotterdam$death)
-```
-
-
-```{r}
 Dlnorm <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + age , dist='lognormal', data=rotterdam)
 Dlnorm
 CS_LnormD <- -log(1 - plnorm(rotterdam$dtime, 9.709442268-0.431016329*(rotterdam$Treatment=="Chemo")
@@ -295,32 +282,11 @@ CoxSnell(CS_LnormR, rotterdam$recur)
 
 We could see that the Log-normal parametric model is an adequate model for both the `dtime` and `rtime` vs. `Treatment` + `size` + `nodes` + `age`.
 
-TODO: why log-normal fit.
+As to why the Log-normal model would be suitable for the data, we are not sure. One thing to consider is that the non-monotonic implication of the data casted by the log-normal model.
 
-cumulative hazard?
+### Positive coefficient of `age`
 
-#```{r}
-library(bshazard)
-fit <- bshazard(Surv(dtime, death) ~ 1, data=rotterdam)
-KM <- survfit(Surv(dtime, death) ~ 1, data=rotterdam)
-plot(fit, conf.int = FALSE)
-#```
-
-```{r}
-meanlog <- 8.514204484-0.382172447*(rotterdam$Treatment=="Chemo")
-                                                  -0.479063703*(rotterdam$Treatment=="Hormon")   
-                                                  -0.605193863*(rotterdam$Treatment=="NaN/Other Treatment")
-                                                  -0.458345796*(rotterdam$size=="20-50")
-                                                  -0.738657689*(rotterdam$size==">50")
-                                                  -0.107708963*rotterdam$nodes 
-                                                  +0.009059467*rotterdam$age
-sdlog <- 1.340545
-
-hlnorm = function(x,meanlog,sdlog) { dlnorm(x,meanlog=meanlog,sdlog=sdlog)/(1-plnorm(x,meanlog=meanlog,sdlog=sdlog)) }
-plot( hlnorm(rotterdam$rtime,meanlog=meanlog,sdlog=sdlog))
-```
-
-In the `rtime ~ Treatment + size + nodes + age` model, it is surprised to see that the coefficient of `age` is positive, though the value is small. One possible explanation could be the idea of "competing events" and "competing risk".
+In the `rtime ~ Treatment + size + nodes + age` models, it is surprised to see that the coefficient of `age` is positive, though the value is small. One possible explanation could be the idea of "competing events" and "competing risk".
 
 In this scenario, having recurred breast cancer and being dead could be somewhat "competing events". Though they are not completely "cannot happen on one person at the same time", it is still reasonable to think that for older patients, it is more likely to die from breast cancer or other complications than being cancer-free for years and then having breast cancer recurred; whereas for younger people, the risk of having recurrent breast cancer could be higher than being dead from the first breast cancer.
 
@@ -340,18 +306,24 @@ The positive coefficient of `age` in the log-normal model may seem indicating a 
 
 ## Cox-PH model:
 
+Another very important part of a survival analysis is building and interpreting the coxph model. With this model, once we have proof of the validation of the PH assumption of the model, we could have nice coefficients to interpret as the logarithm of HR(hazard ratio) among different groups. We will be following the way that we built our parametric models, by using Survival times vs. `age` + `size` + `nodes` + `Treatment`.
+
+### `dtime` coxph model
+
 ```{r}
 m_death_withage = coxph(Surv(dtime, death) ~ Treatment + size + nodes + age, data=rotterdam)
 m_death_withage
+```
+
+First we should check if the PH assumption holds. We will be using a formal test.
+
+```{r}
 cox.zph(m_death_withage)
 ```
 
-```{r}
-new = data.frame(Treatment = "Both", size = "<=20", nodes=0, age=0)
-plot(survfit(m_death_withage, newdata = new),fun="cumhaz", conf.int = FALSE, ylim = c(0,0.25))
-abline(0, 0.1/4000, col="blue")
-```
+One of the variable, `age`, has p-value smaller than 0.05, which indicates the violation of the PH assumption. So we can not intepret the coefficients right away.
 
+One way we came up to solve this problem is to put stratification on `age` by putting a `strata()` on `age` when fitting the model. What this does is to recognize the correlation between `age` and the `dtime`, but not actually including it in our model results. 
 
 ```{r}
 m_death_strataage = coxph(Surv(dtime, death) ~ Treatment + size + nodes + strata(age), data=rotterdam)
@@ -359,6 +331,13 @@ m_death_strataage
 cox.zph(m_death_strataage)
 ```
 
+Now we can see that all the variables' p-value are greater than 0.05 which indicates the PH assumption holds in our model. Now we can finally intepret the coefficients. 
+
+For treatments, we can see that Chemotherapy, Hormontherapy and Other Treatment all have higher risks than patients receiving both therapies. However, note that all three p-values are greater than 0.05, which means that we do not have significant evidence for such relationships. We think that this is because there are too few data point receiving both therapies.
+
+Now let's look at tumor size. It is clear that patients with larger tumor size enjoy higher risks, and as the size grows, the risk is also increasing. such relationship is significant as we can see from the p-values since they are all less than 0.05.
+
+For lymph nodes tested positive, we could see that for 1 unit increase in the number of nodes, the risk will increase by a multiplicative of 1.08. This relationship is also significant as the p-value is smaller than 0.05.
 
 ```{r}
 m_recur = coxph(Surv(rtime, recur) ~ Treatment + size + nodes + age, data=rotterdam)
@@ -367,7 +346,7 @@ cox.zph(m_recur)
 ```
 
 ```{r}
-m_recur = coxph(Surv(rtime, recur) ~ strata(Treatment) + strata(size) + nodes + age, data=rotterdam)
+m_recur = coxph(Surv(rtime, recur) ~ strata(Treatment) + size + nodes + age, data=rotterdam)
 m_recur
 cox.zph(m_recur)
 ```

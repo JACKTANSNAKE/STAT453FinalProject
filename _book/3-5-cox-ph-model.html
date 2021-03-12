@@ -174,8 +174,11 @@ img {
 <li><a href="3-4-parametric-models.html#exponential-models"><span class="toc-section-number">3.4.2</span> Exponential models</a></li>
 <li><a href="3-4-parametric-models.html#weibull-models"><span class="toc-section-number">3.4.3</span> Weibull models</a></li>
 <li><a href="3-4-parametric-models.html#log-normal-models"><span class="toc-section-number">3.4.4</span> Log-normal models</a></li>
+<li><a href="3-4-parametric-models.html#positive-coefficient-of-age"><span class="toc-section-number">3.4.5</span> Positive coefficient of <code>age</code></a></li>
 </ul></li>
-<li><a href="3-5-cox-ph-model.html#cox-ph-model"><span class="toc-section-number">3.5</span> Cox-PH model:</a></li>
+<li class="has-sub"><a href="3-5-cox-ph-model.html#cox-ph-model"><span class="toc-section-number">3.5</span> Cox-PH model:</a><ul>
+<li><a href="3-5-cox-ph-model.html#dtime-coxph-model"><span class="toc-section-number">3.5.1</span> <code>dtime</code> coxph model</a></li>
+</ul></li>
 </ul></li>
 <li class="has-sub"><a href="4-conclusion.html#conclusion"><span class="toc-section-number">4</span> Conclusion</a><ul>
 <li><a href="4-1-limitation.html#limitation"><span class="toc-section-number">4.1</span> Limitation</a></li>
@@ -189,8 +192,11 @@ img {
 <div class="col-sm-12">
 <div id="cox-ph-model" class="section level2">
 <h2><span class="header-section-number">3.5</span> Cox-PH model:</h2>
-<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb100-1" title="1">m_death_withage =<span class="st"> </span><span class="kw">coxph</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age, <span class="dt">data=</span>rotterdam)</a>
-<a class="sourceLine" id="cb100-2" title="2">m_death_withage</a></code></pre></div>
+<p>Another very important part of a survival analysis is building and interpreting the coxph model. With this model, once we have proof of the validation of the PH assumption of the model, we could have nice coefficients to interpret as the logarithm of HR(hazard ratio) among different groups. We will be following the way that we built our parametric models, by using Survival times vs. <code>age</code> + <code>size</code> + <code>nodes</code> + <code>Treatment</code>.</p>
+<div id="dtime-coxph-model" class="section level3">
+<h3><span class="header-section-number">3.5.1</span> <code>dtime</code> coxph model</h3>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb81-1" title="1">m_death_withage =<span class="st"> </span><span class="kw">coxph</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age, <span class="dt">data=</span>rotterdam)</a>
+<a class="sourceLine" id="cb81-2" title="2">m_death_withage</a></code></pre></div>
 <pre><code>## Call:
 ## coxph(formula = Surv(dtime, death) ~ Treatment + size + nodes + 
 ##     age, data = rotterdam)
@@ -206,19 +212,18 @@ img {
 ## 
 ## Likelihood ratio test=487.1  on 7 df, p=&lt; 2.2e-16
 ## n= 2982, number of events= 1272</code></pre>
-<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb102-1" title="1"><span class="kw">cox.zph</span>(m_death_withage)</a></code></pre></div>
+<p>First we should check if the PH assumption holds. We will be using a formal test.</p>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb83-1" title="1"><span class="kw">cox.zph</span>(m_death_withage)</a></code></pre></div>
 <pre><code>##           chisq df       p
 ## Treatment  4.45  3 0.21657
 ## size       4.81  2 0.09023
 ## nodes      3.32  1 0.06850
 ## age       15.12  1 0.00010
 ## GLOBAL    25.38  7 0.00065</code></pre>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb104-1" title="1">new =<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Treatment =</span> <span class="st">&quot;Both&quot;</span>, <span class="dt">size =</span> <span class="st">&quot;&lt;=20&quot;</span>, <span class="dt">nodes=</span><span class="dv">0</span>, <span class="dt">age=</span><span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb104-2" title="2"><span class="kw">plot</span>(<span class="kw">survfit</span>(m_death_withage, <span class="dt">newdata =</span> new),<span class="dt">fun=</span><span class="st">&quot;cumhaz&quot;</span>, <span class="dt">conf.int =</span> <span class="ot">FALSE</span>, <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="fl">0.25</span>))</a>
-<a class="sourceLine" id="cb104-3" title="3"><span class="kw">abline</span>(<span class="dv">0</span>, <span class="fl">0.1</span><span class="op">/</span><span class="dv">4000</span>, <span class="dt">col=</span><span class="st">&quot;blue&quot;</span>)</a></code></pre></div>
-<p><img src="Rotterdam_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb105-1" title="1">m_death_strataage =<span class="st"> </span><span class="kw">coxph</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span><span class="kw">strata</span>(age), <span class="dt">data=</span>rotterdam)</a>
-<a class="sourceLine" id="cb105-2" title="2">m_death_strataage</a></code></pre></div>
+<p>One of the variable, <code>age</code>, has p-value smaller than 0.05, which indicates the violation of the PH assumption. So we can not intepret the coefficients right away.</p>
+<p>One way we came up to solve this problem is to put stratification on <code>age</code> by putting a <code>strata()</code> on <code>age</code> when fitting the model. What this does is to recognize the correlation between <code>age</code> and the <code>dtime</code>, but not actually including it in our model results.</p>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb85-1" title="1">m_death_strataage =<span class="st"> </span><span class="kw">coxph</span>(<span class="kw">Surv</span>(dtime, death) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span><span class="kw">strata</span>(age), <span class="dt">data=</span>rotterdam)</a>
+<a class="sourceLine" id="cb85-2" title="2">m_death_strataage</a></code></pre></div>
 <pre><code>## Call:
 ## coxph(formula = Surv(dtime, death) ~ Treatment + size + nodes + 
 ##     strata(age), data = rotterdam)
@@ -233,14 +238,18 @@ img {
 ## 
 ## Likelihood ratio test=391.7  on 6 df, p=&lt; 2.2e-16
 ## n= 2982, number of events= 1272</code></pre>
-<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb107-1" title="1"><span class="kw">cox.zph</span>(m_death_strataage)</a></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb87-1" title="1"><span class="kw">cox.zph</span>(m_death_strataage)</a></code></pre></div>
 <pre><code>##           chisq df    p
 ## Treatment  3.60  3 0.31
 ## size       4.32  2 0.12
 ## nodes      1.37  1 0.24
 ## GLOBAL     9.64  6 0.14</code></pre>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb109-1" title="1">m_recur =<span class="st"> </span><span class="kw">coxph</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age, <span class="dt">data=</span>rotterdam)</a>
-<a class="sourceLine" id="cb109-2" title="2">m_recur</a></code></pre></div>
+<p>Now we can see that all the variables’ p-value are greater than 0.05 which indicates the PH assumption holds in our model. Now we can finally intepret the coefficients.</p>
+<p>For treatments, we can see that Chemotherapy, Hormontherapy and Other Treatment all have higher risks than patients receiving both therapies. However, note that all three p-values are greater than 0.05, which means that we do not have significant evidence for such relationships. We think that this is because there are too few data point receiving both therapies.</p>
+<p>Now let’s look at tumor size. It is clear that patients with larger tumor size enjoy higher risks, and as the size grows, the risk is also increasing. such relationship is significant as we can see from the p-values since they are all less than 0.05.</p>
+<p>For lymph nodes tested positive, we could see that for 1 unit increase in the number of nodes, the risk will increase by a multiplicative of 1.08. This relationship is also significant as the p-value is smaller than 0.05.</p>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb89-1" title="1">m_recur =<span class="st"> </span><span class="kw">coxph</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span>Treatment <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age, <span class="dt">data=</span>rotterdam)</a>
+<a class="sourceLine" id="cb89-2" title="2">m_recur</a></code></pre></div>
 <pre><code>## Call:
 ## coxph(formula = Surv(rtime, recur) ~ Treatment + size + nodes + 
 ##     age, data = rotterdam)
@@ -256,31 +265,35 @@ img {
 ## 
 ## Likelihood ratio test=429.7  on 7 df, p=&lt; 2.2e-16
 ## n= 2982, number of events= 1518</code></pre>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb111-1" title="1"><span class="kw">cox.zph</span>(m_recur)</a></code></pre></div>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb91-1" title="1"><span class="kw">cox.zph</span>(m_recur)</a></code></pre></div>
 <pre><code>##            chisq df       p
 ## Treatment  7.943  3   0.047
 ## size      26.427  2 1.8e-06
 ## nodes      5.297  1   0.021
 ## age        0.104  1   0.747
 ## GLOBAL    42.374  7 4.4e-07</code></pre>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb113-1" title="1">m_recur =<span class="st"> </span><span class="kw">coxph</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span><span class="kw">strata</span>(Treatment) <span class="op">+</span><span class="st"> </span><span class="kw">strata</span>(size) <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age, <span class="dt">data=</span>rotterdam)</a>
-<a class="sourceLine" id="cb113-2" title="2">m_recur</a></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb93-1" title="1">m_recur =<span class="st"> </span><span class="kw">coxph</span>(<span class="kw">Surv</span>(rtime, recur) <span class="op">~</span><span class="st"> </span><span class="kw">strata</span>(Treatment) <span class="op">+</span><span class="st"> </span>size <span class="op">+</span><span class="st"> </span>nodes <span class="op">+</span><span class="st"> </span>age, <span class="dt">data=</span>rotterdam)</a>
+<a class="sourceLine" id="cb93-2" title="2">m_recur</a></code></pre></div>
 <pre><code>## Call:
-## coxph(formula = Surv(rtime, recur) ~ strata(Treatment) + strata(size) + 
+## coxph(formula = Surv(rtime, recur) ~ strata(Treatment) + size + 
 ##     nodes + age, data = rotterdam)
 ## 
-##            coef exp(coef)  se(coef)      z        p
-## nodes  0.078816  1.082006  0.004645 16.969  &lt; 2e-16
-## age   -0.009373  0.990671  0.002335 -4.013 5.98e-05
+##                coef exp(coef)  se(coef)      z        p
+## size20-50  0.396037  1.485924  0.057899  6.840 7.91e-12
+## size&gt;50    0.693201  2.000107  0.087565  7.916 2.44e-15
+## nodes      0.080220  1.083525  0.004576 17.529  &lt; 2e-16
+## age       -0.008805  0.991233  0.002315 -3.804 0.000142
 ## 
-## Likelihood ratio test=224.1  on 2 df, p=&lt; 2.2e-16
+## Likelihood ratio test=404.3  on 4 df, p=&lt; 2.2e-16
 ## n= 2982, number of events= 1518</code></pre>
-<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb115-1" title="1"><span class="kw">cox.zph</span>(m_recur)</a></code></pre></div>
-<pre><code>##        chisq df    p
-## nodes  2.626  1 0.11
-## age    0.886  1 0.35
-## GLOBAL 3.828  2 0.15</code></pre>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb95-1" title="1"><span class="kw">cox.zph</span>(m_recur)</a></code></pre></div>
+<pre><code>##          chisq df       p
+## size   31.3790  2 1.5e-07
+## nodes   9.8790  1  0.0017
+## age     0.0979  1  0.7544
+## GLOBAL 35.2423  4 4.1e-07</code></pre>
 
+</div>
 </div>
 <!-- </div> -->
 <p style="text-align: center;">

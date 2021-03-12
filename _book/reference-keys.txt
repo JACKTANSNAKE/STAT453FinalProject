@@ -23,7 +23,9 @@ user-defined-cox-snell-function
 exponential-models
 weibull-models
 log-normal-models
+positive-coefficient-of-age
 cox-ph-model
+dtime-coxph-model
 conclusion
 limitation
 reference

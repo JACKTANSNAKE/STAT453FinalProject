@@ -1,6 +1,8 @@
 # Conclusion
 
-nb
+From our research, we have seen and proven that though treatment(in our dataset) might appear to have different effect on patients, by including confounder and other factors, we do not have enough evidence that the difference is solid. For the TNM diagnostics of breast cancer, though we do not have data about metastasis, we still had significant result for the relationship between tumor size and number of lymph nodes tested positive. We have also seen that the most formidable aspect of breast cancer(or maybe all cancer) is the recurrence, as in our research there's not much time left if a patients tumor have recurred. But generally, breast cancer has a relative long survival and patients diagnosed with breast cancer should not be pessimistic but rather face reality and seek proper treatment. In this way, one might achieve as long survival as possible.
+
+Of course, there are many limitations within our research and much more that we could explore in the realm of breast cancer. We will list a few for future study below. 
 
 ## Limitation
 
