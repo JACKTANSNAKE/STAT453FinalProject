@@ -192,7 +192,7 @@ ggplot(data = rotterdam, aes(x = age, y = rtime, color = Treatment)) +
   geom_point(alpha = 0.5)
 ```
 
-It might be different to see from the plots right now, so we decided to make a partial plot of the full plot by filtering the patients who did not take either treatment out.
+It might be difficult to see from the plots right now, so we decided to make a partial plot of the full plot by filtering the patients who did not take either treatment out.
 
 ```{r}
 rotterdam_new <-rotterdam %>%
