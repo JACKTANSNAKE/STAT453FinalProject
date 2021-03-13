@@ -262,6 +262,14 @@ ggplot(data = rotterdam, aes(x = Treatment, fill = Nodes_level)) +
 
 This time we are checking if there are difference in `Treatment` with respect to different positive lymph node levels. Now we are onto something interesting. We can see that none of the `N0` patients in our dataset have taken either chemotherapy or hormontherapy. we think that it is possible that chemotherapy and hormontherapy are for severer patients and they might just be "overkill" for mild patients.
 
+`Treatment` vs. `grade`
+```{r}
+ggplot(data = rotterdam, aes(x = Treatment, fill = grade)) + 
+  geom_bar(position = "fill")
+```
+
+From the above we can see that for grade 2 and grade 3 breast cancer, there's not too much difference in the treatment a patient takes.
+
 ### General X-year Survival Rate
 
 A very important criterion in analysis about cancer is the 5-year survival rate. In order to examine that, we introduce a new variable called `5_year_survival`, which indicates 1 if a patients survival time is larger than 5 years and 0 vice versa.
