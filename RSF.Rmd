@@ -1,4 +1,4 @@
-# Prediction
+# Random Survival Forest
 
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
 library(survival)
@@ -7,8 +7,6 @@ library(tidyverse)
 library(caret)
 library(ranger)
 library(randomForestSRC)
-library(LTRCtrees)
-library(rpart.plot)
 ```
 
 Another point of interest might be how could we predict a patients survival based on some of his/ her diagnostics and treatment records. In order to do this, we will fit a random survival forest model to make predictions.
@@ -41,7 +39,7 @@ rotterdam_recur <- rotterdam %>%
   mutate(drecurtime = dtime-rtime)
 ```
 
-## Random Survival Forest
+## `dtime`
 
 ```{r}
 set.seed(453)
@@ -64,6 +62,8 @@ plot.rfsrc(rfsrc(Surv(dtime, death) ~ age + Treatment + size + nodes + grade, ro
 
 As we can see, in our fit of RSF, the most important variable is `nodes` and the second most important variable is `age`. Both variables are quantitative variables.
 
+## `rtime`
+
 ```{r}
 set.seed(453)
 # Sample the data and create a training subset.
@@ -80,3 +80,7 @@ print(rotterdam.pred)
 ```{r}
 plot.rfsrc(rfsrc(Surv(rtime, recur) ~ age + Treatment + size + nodes + grade, rotterdam, block.size = 1, importance = TRUE))
 ```
+
+Similarly, RSF for predicting `rtime` also have error rate around 30%, and the most important factors are `node`, `size` and `age`. 
+
+Though the prediction from RSF is not that accurate, but its variable importance ranking gives us very similar information to Chapter 3, that the diagnostic values and age are the most significant part that decides patients' lives.

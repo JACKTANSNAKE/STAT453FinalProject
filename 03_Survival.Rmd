@@ -396,7 +396,7 @@ Finally, we will examine the adequacy of Log-normal model.
 
 ```{r}
 Dlnorm <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + grade + age , dist='lognormal', data=rotterdam)
-Dlnorm
+summary(Dlnorm)
 CS_LnormD <- -log(1 - plnorm(rotterdam$dtime, 9.91512622-0.42502769*(rotterdam$Treatment=="Chemo")
                                                   -0.31448004*(rotterdam$Treatment=="Hormon")  
                                                   -0.41616843*(rotterdam$Treatment=="NaN/Other Treatment")
@@ -412,7 +412,7 @@ CoxSnell(CS_LnormD, rotterdam$death)
 
 ```{r}
 Rlnorm <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + grade + age, dist='lognormal', data=rotterdam)
-Rlnorm
+summary(Rlnorm)
 CS_LnormR <- -log(1 - plnorm(rotterdam$rtime, 8.78912009-0.36138607*(rotterdam$Treatment=="Chemo")
                                                   -0.41809135*(rotterdam$Treatment=="Hormon")   
                                                   -0.58077716*(rotterdam$Treatment=="NaN/Other Treatment")
@@ -449,7 +449,7 @@ exp(-0.30866307) # grade 3
 exp(-0.01004650) # age
 ```
 
-Having chemotherapy, hormon-therapy and NaN/Other Treatment is associated with a scaling of mean survival time by 0.6537517, 0.7301685 and 0.6595692 respectively, compared to having both chemo and hormon therapies.
+Having chemotherapy, hormon-therapy and NaN/Other Treatment is associated with a scaling of mean survival time by 0.6537517, 0.7301685 and 0.6595692 respectively, compared to having both chemo and hormon therapies. However, the relationships are all insignificant.
 
 Compared to tumor size <=20mm, having tumor size 20-50mm and >50mm will make the expected survival time scaled by 0.7061876 and 0.543805.
 
@@ -470,7 +470,7 @@ exp(-0.43987388) # grade 3
 exp(0.00892277) # age
 ```
 
-Having chemotherapy, hormon-therapy and NaN/Other Treatment is associated with a scaling of mean time till recurrence by 0.69671, 0.6583021 and 0.5594634 respectively, compared to having both chemo and hormon therapies.
+Having chemotherapy, hormon-therapy and NaN/Other Treatment is associated with a scaling of mean time till recurrence by 0.69671, 0.6583021 and 0.5594634 respectively, compared to having both chemo and hormon therapies. And the relations here are also insignificant.
 
 Compared to tumor size <=20mm, having tumor size 20-50mm and >50mm will make the expected survival time scaled by 0.6579301 and 0.5107943.
 
