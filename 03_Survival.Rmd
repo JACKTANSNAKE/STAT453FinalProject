@@ -45,49 +45,105 @@ For all the survival analysis below, we will include `death` and `recur` to exam
 
 ## Kaplan-Miere estimator of the entire dataset
 
-Death Time
+Generally speaking, Kaplan-Miere curve is a non-parametric estimator of the survival function which takes censoring into account. Its y-axis measures $P(X \leq k)$ for various values of $k$. 
+
+#### Death Time
 ```{r}
-KM <- survfit(Surv(dtime, death) ~ 1, data = rotterdam)
-plot(KM, conf.int = TRUE, col = "blue", xlab="Days", ylab="Survival")
+KM_d <- survfit(Surv(dtime, death) ~ 1, data = rotterdam)
+plot(KM_d, conf.int = TRUE, xlab="Days", ylab="Survival")
 ```
+
+Kaplan-Meier curve also helps us finding the median and mean estimate. For median, we can directly find it from the survfit object `KM_d`. For mean, we need to calculate the area under the Kaplan-Meier curve.
+
+```{r}
+# median
+KM_d
+```
+
+```{r}
+# mean
+
+# AUCKM stands for "Area Under Curve Kaplan Meier":
+AUCKM = function(survobj,duration)
+{
+base=c(0,summary(survobj)$time,max(duration))
+heights=c(1,summary(survobj)$surv)
+new=c()
+for(i in 1:length(heights)) { new=c(new,(base[i+1]-base[i])*heights[i]) }
+c(sum(new))
+}
+
+AUCKM(KM_d,rotterdam$dtime)
+```
+
+The overall mean survival time till death for breast cancer is 4099.795 days, and the overall median survival time till death for breast cancer is 4033 days. Both of them are approximately 7 years.
+
+We can find that the mean and median we calculated above is much longer than the mean and median of the variable `dtime` itself, because a lot of data point are right-censored:
 
 ```{r}
 mean(rotterdam$dtime)
 median(rotterdam$dtime)
 ```
 
-The overall mean survival time till death for breast cancer is 2605 days, which is approximately 7 years. The overall median survival time till death for breast cancer is 2638 days, which is also approximately 7 years.
 
-Recurrence Time
+
+#### Recurrence Time
+
 ```{r}
-KM <- survfit(Surv(rtime, recur) ~ 1, data = rotterdam)
-plot(KM, conf.int = TRUE, col = "blue", xlab="Days", ylab="Survival")
+KM_r <- survfit(Surv(rtime, recur) ~ 1, data = rotterdam)
+plot(KM_r, conf.int = TRUE, xlab="Days", ylab="Survival")
+```
+
+We can find the mean and median in a similar way:
+
+```{r}
+# median
+KM_r
 ```
 
 ```{r}
-mean(rotterdam$rtime)
-median(rotterdam$rtime)
+# mean
+
+AUCKM(KM_r,rotterdam$rtime)
 ```
 
-The overall mean survival time till recurrence for breast cancer is 2097 days, which is approximately 6 years. The overall median survival time till recurrence for breast cancer is 1940 days, which is also approximately 5 years.
+The overall mean survival time till recurrence for breast cancer is 3588.535 days, which is approximately 10 years. The overall median survival time till recurrence for breast cancer is 2983 days, which is approximately 8 years. Notice here our mean is much greater than the median, and this indicates that our `rtime` should be right-skewed.
 
 ```{r}
-KM <- survfit(Surv(drecurtime, death) ~ 1, data = rotterdam_recur)
-plot(KM, conf.int = TRUE, col = "blue", xlab="Days", ylab="Survival")
+ggplot(rotterdam, aes(x=rtime)) +
+   geom_density() 
+```
+
+#### Survival time after recurrence
+
+```{r}
+KM_dr <- survfit(Surv(drecurtime, death) ~ 1, data = rotterdam_recur)
+plot(KM_dr, conf.int = TRUE, xlab="Days", ylab="Survival")
 ```
 
 ```{r}
-mean(rotterdam_recur$drecurtime)
-median(rotterdam_recur$drecurtime)
+# median
+KM_dr
 ```
 
-The overall mean survival time after rucurrence till death for breast cancer is 834 days, which is approximately a little more than 2 years. The overall median survival time after rucurrence till death for breast cancer is 625 days, which is approximately less than 2 years.
+```{r}
+# mean
 
-Since a Kaplan-Miere estimator is unbiased, we could view the median as being very close to the true value of survival time. 
+AUCKM(KM_dr,rotterdam_recur$drecurtime)
+```
+
+The overall mean survival time after rucurrence till death for breast cancer is 1407.135 days, which is approximately a little less than 4 years. The overall median survival time after rucurrence till death for breast cancer is 894 days, which is approximately 2 years and a half. Here, the mean is also greater than the median, also indicating right-skewness:
+
+```{r}
+ggplot(rotterdam_recur, aes(x=drecurtime)) +
+   geom_density() 
+```
+
+Since a Kaplan-Miere estimator is unbiased, we could view the mean and median as being very close to the true value of survival time. 
 
 ## Kaplan-Miere estimator on different variables in `rotterdam`
 
-There are 16 variables in the `rotterdam` dataset. Of course we could have fit each variable with a KM estimator, but it would be meaningless to do them all. We will stick to the Diagnostics and Treatment we mentioned in Chapter 2 and fit `size`, `Nodes_level`(we are not using nodes because a Kaplan-Miere estimator does not work well with quantitative variables), and `Treatment` each with KM estimators with respect to `dtime`, `rtime`, and `drecurtime` to grasp the survival time within each categories of the variables.
+There are 16 variables in the `rotterdam` dataset. Of course we could have fit each variable with a KM estimator, but it would be meaningless to do them all. We will stick to the Diagnostics and Treatment we mentioned in Chapter 2 and fit `size`, `Nodes_level`(we are not using nodes because a Kaplan-Miere estimator does not work well with quantitative variables), `grade` and `Treatment` each with KM estimators with respect to `dtime`, `rtime`, and `drecurtime` to grasp the survival time within each categories of the variables.
 
 ### `size` vs. Survival Times
 
@@ -152,7 +208,38 @@ legend(4500, 1, legend=c("N0", "N1","N2", "N3"),
        title="Nodes_level", text.font=6)
 ```
 
-The trend is still the same as patients with fewer nodes tested positive enjoy longer survival of death after recurrence, but the survival time now decreases much faster for all groups, and the difference is small in groups `N1`, `N2` and `N3`.
+Similarly, the trend is still the same as patients with fewer nodes tested positive enjoy longer survival of death after recurrence, but the survival time now decreases much faster for all groups, and the difference is small in groups `N1`, `N2` and `N3`.
+
+### `grade` vs. Survival Times
+
+`grade` vs. `dtime`
+```{r}
+KM_None_Death <- survfit(Surv(dtime, death) ~ grade, data = rotterdam)
+plot(KM_None_Death, conf.type = "plain", col = c("black","red"), xlab="Days", ylab="Survival")
+legend(6000, 1, legend=c("2", "3"),
+       col=c("black", "red"), lty=1, cex=0.8,
+       title="grade", text.font=6)
+```
+
+`grade` vs. `rtime`
+```{r}
+KM_None_Recur <- survfit(Surv(rtime, recur) ~ grade, data = rotterdam)
+plot(KM_None_Recur, conf.type = "plain", col = c("black","red"), xlab="Days", ylab="Survival")
+legend(6000, 1, legend=c("2", "3"),
+       col=c("black", "red"), lty=1, cex=0.8,
+       title="Nodes_level", text.font=6)
+```
+
+`grade` vs. `drecurtime`
+```{r}
+KM_None_drecur <- survfit(Surv(drecurtime, death) ~ grade, data = rotterdam_recur)
+plot(KM_None_drecur, conf.type = "plain", col = c("black","red"), xlab="Days", ylab="Survival")
+legend(4500, 1, legend=c("2", "3"),
+       col=c("black", "red"), lty=1, cex=0.8,
+       title="Nodes_level", text.font=6)
+```
+
+Similarly, we find that patients with grade 2 breast cancer show clear distinction in both the survival of death and recurrence. However, such distinct becomes less obvious for the survival of death after recurrence has occurred.
 
 ### `Treatment` vs. Survival Times
 
@@ -191,9 +278,26 @@ However, sadly enough, from the above plot we could see that no matter what trea
 
 Another point that we are going to explore is if we would be able to fit our data to a parametric model. This matters since if we could fit any parametric model, then we should have a model good enough to generate predictions of breast cancer patients' survival and would have nice and interpretable coefficients to work with.
 
-To do so, we will begin by checking if any of Exponential, Weibull, or Log-normal distribution would be adequate parametric assumption to cast on our data. We will verify the adequacy by checking the Cox-Snell residual plot. We will be fitting models using variables: `Treatment`, `size`, `nodes`, `age`(We have shown in Chapter 2 that age is a confounder for categories in Treatment).
+To do so, we will begin by checking if any of Exponential, Weibull, or Log-normal distribution would be adequate parametric assumption to cast on our data. We will verify the adequacy by checking the Cox-Snell residual plot. We will be fitting models using variables: `Treatment`, `size`, `nodes`, `grade`, `age` (we have shown in Chapter 2 that age is a confounder for categories in Treatment).
 
 ### User-defined Cox-Snell function
+
+If we fit Exponential model on the survival time, we have the function $S(t) &= e^{-\lambda t}$, and we can transform the survival function into an expression for the “complementary log-log”:
+
+\begin{align*}
+S(t) &= e^{-\lambda t} \\
+\log[S(t)] &= -\lambda t \\
+-\log[S(t)] &= \lambda t \\
+\log\big(-\log[S(t)] \big) &= \log\lambda + \log t
+\end{align*}
+
+Then, if we let $y=\log\big(-\log[S(t)] \big)$, $m=1$, $b=\log(\lambda)$, and $x=\log(t)$, then we can view the equation in the form $y=mx+b = 1*x+b$.
+
+This means that if Exponential model is adequate, its complementary log-log plot should be a linear line with slope=1 and intercept=0.
+
+And for any other parametric model, we can define a Cox-Snell residual as $CS_i = -log(\hat{S}_p(t_i|x_i))$ for $i=1,\dots, n$, and $CS_i$s should behave like data drawn from an Exponential distribution ($\lambda=1$).
+
+Thus, we can check the adequacy of any model by checking the Exponential-ness of its Cox-Snell residuals. We can graph $CS_i$ vs $log(CS_i)$, and the graph should also look linear with slope =1 and intercept=0, if the parametric model is adequate for the data.
 
 ```{r}
 # The Cox-Snell function takes as inputs
@@ -212,45 +316,79 @@ abline(0,1,col='red')
 }
 ```
 
-### Exponential models
+### Exponential and Weibull
 
-We will begin by verifying the adequacy of Exponential model.
+We first tried to examine the adquacy of Exponential and Weibull model, but none of them are adquate for our dataset:
 
-```{r}
-Dexp <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + age, dist='exponential', data=rotterdam)
+1. `dtime, death ~ Treatment + size + nodes + grade + age` under Exponential:
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+Dexp <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + grade + age, dist='exponential', data=rotterdam)
 Dexp
+CS_expD = -log(1 - pexp(rotterdam$dtime, 1/exp(10.72043480-0.51333347*(rotterdam$Treatment=="Chemo")
+                                                 -0.41382108*(rotterdam$Treatment=="Hormon")
+                                                 -0.45674929*(rotterdam$Treatment=="NaN/Other Treatment")
+                                                 -0.44229181*ifelse(rotterdam$size=="20-50",1,0)
+                                                 -0.76874022*ifelse(rotterdam$size==">50",1,0)
+                                                 -0.06922296*rotterdam$nodes
+                                                 -0.32925464*(rotterdam$grade=="3")
+                                                 -0.01424763*rotterdam$age)))
+# Make appropriate graph using CoxSnell function
+CoxSnell(CS_expD, rotterdam$death)
 ```
 
-![](Cox-Snell/DexpDeath.png)
+2. `rtime, recur ~ Treatment + size + nodes + grade + age` under Exponential:
 
-```{r}
-Dexp <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + age, dist='exponential', data=rotterdam)
-Dexp
+```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+Rexp <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + grade + age, dist='exponential', data=rotterdam)
+Rexp
+CS_expR = -log(1 - pexp(rotterdam$rtime, 1/exp(9.08115951-0.373811470*(rotterdam$Treatment=="Chemo")
+                                                 -0.507332960*(rotterdam$Treatment=="Hormon")
+                                                 -0.485387357*(rotterdam$Treatment=="NaN/Other Treatment")
+                                                 -0.372059978*ifelse(rotterdam$size=="20-50",1,0)
+                                                 -0.654240460*ifelse(rotterdam$size==">50",1,0)
+                                                 -0.080821343*rotterdam$nodes
+                                                 -0.393920415*(rotterdam$grade=="3")
+                                                 +0.008095379*rotterdam$age)))
+# Make appropriate graph using CoxSnell function
+CoxSnell(CS_expR, rotterdam$recur)
 ```
 
-![](Cox-Snell/DexpRecur.png)
 
-The Exponential does not seem adequate in this case.
+3. `dtime, death ~ Treatment + size + nodes + grade + age` under Weibull:
 
-### Weibull models
-
-Next we will examine the adequacy of Weibull model.
-
-```{r}
-Dweibull <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + age, dist='weibull', data=rotterdam)
+```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+Dweibull <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + grade + age, dist='weibull', data=rotterdam)
 Dweibull
+CS_weibullD = -log(1 - pweibull(rotterdam$dtime, 1/0.7370449, exp(10.10735484-0.39504003*(rotterdam$Treatment=="Chemo")
+                                                                         -0.37941684*(rotterdam$Treatment=="Hormon")
+                                                                         -0.35423500*(rotterdam$Treatment=="NaN/Other Treatment")
+                                                                         -0.33487166*ifelse(rotterdam$size=="20-50",1,0)
+                                                                         -0.61672126*ifelse(rotterdam$size==">50",1,0)
+                                                                         -0.05500626*rotterdam$nodes
+                                                                         -0.26093659*(rotterdam$grade=="3")
+                                                                         -0.01130402*rotterdam$age)))
+# Make appropriate graph using CoxSnell function
+CoxSnell(CS_weibullD, rotterdam$death)
 ```
 
-![](Cox-Snell/DweibullDeath.png)
+4. `rtime, recur ~ Treatment + size + nodes + grade + age` under Weibull:
 
-```{r}
-Dweibull <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + age, dist='weibull', data=rotterdam)
-Dweibull
+```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+Rweibull <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + grade + age, dist='weibull', data=rotterdam)
+Rweibull
+CS_weibullR = -log(1 - pweibull(rotterdam$rtime, 1/1.014145, exp(9.092880859-0.376425745*(rotterdam$Treatment=="Chemo")
+                                                                         -0.508855839*(rotterdam$Treatment=="Hormon")
+                                                                         -0.489527042*(rotterdam$Treatment=="NaN/Other Treatment")
+                                                                         -0.376473401*ifelse(rotterdam$size=="20-50",1,0)
+                                                                         -0.659532060*ifelse(rotterdam$size==">50",1,0)
+                                                                         -0.081625087 *rotterdam$nodes
+                                                                         -0.398251643*(rotterdam$grade=="3")
+                                                                         +0.008216064*rotterdam$age)))
+# Make appropriate graph using CoxSnell function
+CoxSnell(CS_weibullR, rotterdam$recur)
 ```
 
-![](Cox-Snell/DweibullRecur.png)
-
-The Weibull model is still not adequate.
 
 ### Log-normal models
 
@@ -289,11 +427,70 @@ CS_LnormR <- -log(1 - plnorm(rotterdam$rtime, 8.78912009-0.36138607*(rotterdam$T
 CoxSnell(CS_LnormR, rotterdam$recur)
 ```
 
-We could see that the Log-normal parametric model is an adequate model for both the `dtime` and `rtime` vs. `Treatment` + `size` + `nodes` + `age`.
+We could see that the Log-normal parametric model is an adequate model for both the `dtime` and `rtime` vs. `Treatment` + `size` + `nodes` + `grade` + `age`.
 
-As to why the Log-normal model would be suitable for the data, we are not sure. One thing to consider is that the non-monotonic implication of the data casted by the log-normal model.
+#### Interpretation of the coefficients
 
-### Positive coefficient of `age`
+Lognormal is an example of a class of models called Accelerated Failure Time (AFT) models, in which every 1-unit increase in $x_i$ is associated with a scaling of time by $e^{c_i}$, where $c$ is the coefficient of $x$ in the regression model. The quantity $e^{c_i}$
+is referred to as a time ratio (TR), and thus each $c_i$ represents a log(TR).
+
+Thus, the results of our lognormal model can be interpreted in the following way:
+
+##### For `dtime`:
+
+```{r}
+exp(-0.42502769) # chemo
+exp(-0.3144800) # hormon
+exp(-0.41616843) # NaN/Other Treatment
+exp(-0.34787441) # size 20-50
+exp(-0.60916461) # size >50
+exp(-0.07772719) # nodes
+exp(-0.30866307) # grade 3
+exp(-0.01004650) # age
+```
+
+Having chemotherapy, hormon-therapy and NaN/Other Treatment is associated with a scaling of mean survival time by 0.6537517, 0.7301685 and 0.6595692 respectively, compared to having both chemo and hormon therapies.
+
+Compared to tumor size <=20mm, having tumor size 20-50mm and >50mm will make the expected survival time scaled by 0.7061876 and 0.543805.
+
+For node and age, each extra positive lymph nodes and every 1-year increase in age is associated with a scaling of mean survival time by 0.9252168 and 0.9900038. 
+
+And compared to grade II, grade III of cancer cell makes the expected survival time multiplied by 0.7344282.
+
+##### For `rtime`:
+
+```{r}
+exp(-0.36138607) # chemo
+exp(-0.41809135) # hormon
+exp(-0.58077716) # NaN/Other Treatment
+exp(-0.41865655) # size 20-50
+exp(-0.67178824) # size >50
+exp(-0.10590430) # nodes
+exp(-0.43987388) # grade 3
+exp(0.00892277) # age
+```
+
+Having chemotherapy, hormon-therapy and NaN/Other Treatment is associated with a scaling of mean time till recurrence by 0.69671, 0.6583021 and 0.5594634 respectively, compared to having both chemo and hormon therapies.
+
+Compared to tumor size <=20mm, having tumor size 20-50mm and >50mm will make the expected survival time scaled by 0.6579301 and 0.5107943.
+
+For node and age, each extra positive lymph nodes and every 1-year increase in age is associated with a scaling of mean survival time by 0.8995107 and 1.008963. 
+
+And compared to grade II, grade III of cancer cell makes the expected survival time multiplied by 0.6441177.
+ 
+
+#### Why log-normal
+
+As to why the Log-normal model would be suitable for the data, we are not sure. One thing to consider is that the non-monotonicity of the hazard function, which is one main characteristic of log-normal model compared to Exponential and Weibull.
+
+The plot below graphs the general hazard functions of our `dtime` and `rtime` in a non-parametric way, and we can find that both of them shows non-monotonicity. Though we cannot graph the exact hazard functions conditioning on the diagnostic and treatment information, the non-parametric hazard can still partially explain the adquacy of log-normal.
+
+![](Cox-Snell/dhazard.png)
+
+![](Cox-Snell/rhazard.png)
+
+
+#### Positive coefficient of `age`
 
 In the `rtime ~ Treatment + size + nodes + age` models, it is surprised to see that the coefficient of `age` is positive, though the value is small. One possible explanation could be the idea of "competing events" and "competing risk".
 
@@ -315,9 +512,15 @@ The positive coefficient of `age` in the log-normal model may seem indicating a 
 
 ## Cox-PH model:
 
-Another very important part of a survival analysis is building and interpreting the coxph model. With this model, once we have proof of the validation of the PH assumption of the model, we could have nice coefficients to interpret as the logarithm of HR(hazard ratio) among different groups. We will be following the way that we built our parametric models, by using Survival times vs. `age` + `size` + `nodes` + `Treatment`.
+Another very important part of a survival analysis is looking for the hazard ratio by building and interpreting the coxph model. 
 
-### `dtime` coxph model
+Cox’s PH model assumes that the hazard function for any subject can be written as: $h(t) = h_0(t)e^{b_1 x_1 + b_2 x_2 + \dots + b_k x_k}$,
+where $h_0(t)$ is called a baseline hazard function, and the $x_i$'s are covariates. The Cox PH model assumes that, for any 2 values
+of a covariate, the hazard ratio (HR) is constant over time.
+
+With this model, once we have proof of the validation of the PH assumption of the model, we could have nice coefficients to interpret as the logarithm of HR(hazard ratio) among different groups. We will be following the way that we built our parametric models, by using Survival times vs. `age` + `size` + `nodes` + `grade` + `Treatment`.
+
+### Cox-PH model for `dtime`
 
 ```{r}
 m_death_withage = coxph(Surv(dtime, death) ~ Treatment + size + nodes + grade + age, data=rotterdam)
@@ -330,37 +533,43 @@ First we should check if the PH assumption holds. We will be using a formal test
 cox.zph(m_death_withage)
 ```
 
-One of the variable, `age`, has p-value smaller than 0.05, which indicates the violation of the PH assumption. So we can not intepret the coefficients right away.
+There are two variables, `age` and `nodes`, that have have p-value smaller than 0.05, which indicates the violation of the PH assumption.
 
-One way we came up to solve this problem is to put stratification on `age` by putting a `strata()` on `age` when fitting the model. What this does is to recognize the correlation between `age` and the `dtime`, but not actually including it in our model results. 
+One way we came up to solve this problem is to put stratification on `age` and `nodes` by putting a `strata()` on them when fitting the model. What this does is to recognize the correlation between `age` and `dtime` and `nodes` and `dtime`, but not actually including them in our model results. 
 
 ```{r}
-m_death_strataage = coxph(Surv(dtime, death) ~ Treatment + size + nodes + grade + strata(age), data=rotterdam)
+m_death_strataage = coxph(Surv(dtime, death) ~ Treatment + size + strata(nodes) + grade + strata(age), data=rotterdam)
 m_death_strataage
 cox.zph(m_death_strataage)
 ```
 
-Now we can see that all the variables' p-value are greater than 0.05 which indicates the PH assumption holds in our model. Now we can finally intepret the coefficients. 
+Now we can see that all the variables' p-value are greater than 0.05 which indicates the PH assumption holds in our model. 
 
-For treatments, we can see that Chemotherapy, Hormontherapy and Other Treatment all have higher risks than patients receiving both therapies. However, note that all three p-values are greater than 0.05, which means that we do not have significant evidence for such relationships. We think that this is because there are too few data point receiving both therapies.
+For treatments, we can see that Chemotherapy, Hormontherapy and Other Treatment all have higher risks than patients receiving both therapies, with hazard ratio 1.57808, 1.56706 and 2.14035 respectively. However, note that all three p-values are greater than 0.05, which means that we do not have significant evidence for such relationships. 
 
-Now let's look at tumor size. It is clear that patients with larger tumor size enjoy higher risks, and as the size grows, the risk is also increasing. such relationship is significant as we can see from the p-values since they are all less than 0.05.
+And for size, it is clear that patients with larger tumor size enjoy higher risks, and as the size grows, the risk is also increasing, with hazard ratio 1.53977 and 1.88536 for 20-50mm vs. <=20mm and >50mm vs. <=20mm. Such relationship is significant as we can see from the p-values since they are all less than 0.05.
 
-For lymph nodes tested positive, we could see that for 1 unit increase in the number of nodes, the risk will increase by a multiplicative of 1.08. This relationship is also significant as the p-value is smaller than 0.05.
+For grade, we could see that the risk is going to be multiplied by 1.46358, if it goes from grade II to grade III, and the relation is staitstically significant.
 
-```{r}
-m_recur = coxph(Surv(rtime, recur) ~ Treatment + size + nodes + age, data=rotterdam)
-m_recur
-cox.zph(m_recur)
-```
+### Cox-PH model for `rtime`
 
 ```{r}
-m_recur = coxph(Surv(rtime, recur) ~ strata(Treatment) + size + nodes + age, data=rotterdam)
+m_recur = coxph(Surv(rtime, recur) ~ Treatment + strata(size) + strata(nodes) + strata(grade) + age, data=rotterdam)
 m_recur
-cox.zph(m_recur)
 ```
 
+For `rtime`, we found that all the diagnostic information `size`, `nodes` and `grade` obeys the PH assumption, and we can only investigate `Treatment` and `age`.
 
+We can find that patients taking both chemo and hormon therapies still have lowest hazard of breast cancer recurrence, and having chemo only, hormon only or NaN/Other Treatment will multiply the hazard by 1.323703, 1.485958 and 2.264464 respectively. However, the statistical significance is not that strong.
+
+And for age, it's still surprised to see that its coefficient is negative, indicating that every 1-year increase in age will make the hazard of breast cancer recurrence by 0.984741. The reason behind this should be the same as the idea of competing risk we mentioned above. 
+
+
+## Summary
+
+Based on all the survival analysis above, we found that different treatment ways actually does not differ significantly in extending patients' survival time or time till recurrence, and the main factors that affect patients' life are the diagnostic information: tumor size, number of positive lymph nodes and tumor grade. 
+
+This reminds us the importance of taking screening every three years. Current medical level still fails to cure breast cancer, but with early diagnosis, patients' lives can be extended by a lot. 
 
 
 
