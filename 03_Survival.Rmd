@@ -282,7 +282,7 @@ To do so, we will begin by checking if any of Exponential, Weibull, or Log-norma
 
 ### User-defined Cox-Snell function
 
-If we fit Exponential model on the survival time, we have the function $S(t) &= e^{-\lambda t}$, and we can transform the survival function into an expression for the “complementary log-log”:
+If we fit Exponential model on the survival time, we have the function $S(t) = e^{-\lambda t}$, and we can transform the survival function into an expression for the “complementary log-log”:
 
 \begin{align*}
 S(t) &= e^{-\lambda t} \\
@@ -322,73 +322,36 @@ We first tried to examine the adquacy of Exponential and Weibull model, but none
 
 1. `dtime, death ~ Treatment + size + nodes + grade + age` under Exponential:
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+```{r,warning=FALSE,message=FALSE}
 Dexp <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + grade + age, dist='exponential', data=rotterdam)
 Dexp
-CS_expD = -log(1 - pexp(rotterdam$dtime, 1/exp(10.72043480-0.51333347*(rotterdam$Treatment=="Chemo")
-                                                 -0.41382108*(rotterdam$Treatment=="Hormon")
-                                                 -0.45674929*(rotterdam$Treatment=="NaN/Other Treatment")
-                                                 -0.44229181*ifelse(rotterdam$size=="20-50",1,0)
-                                                 -0.76874022*ifelse(rotterdam$size==">50",1,0)
-                                                 -0.06922296*rotterdam$nodes
-                                                 -0.32925464*(rotterdam$grade=="3")
-                                                 -0.01424763*rotterdam$age)))
-# Make appropriate graph using CoxSnell function
-CoxSnell(CS_expD, rotterdam$death)
 ```
+
+![](Cox-Snell/DWeibull.png)
 
 2. `rtime, recur ~ Treatment + size + nodes + grade + age` under Exponential:
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+```{r, warning=FALSE}
 Rexp <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + grade + age, dist='exponential', data=rotterdam)
 Rexp
-CS_expR = -log(1 - pexp(rotterdam$rtime, 1/exp(9.08115951-0.373811470*(rotterdam$Treatment=="Chemo")
-                                                 -0.507332960*(rotterdam$Treatment=="Hormon")
-                                                 -0.485387357*(rotterdam$Treatment=="NaN/Other Treatment")
-                                                 -0.372059978*ifelse(rotterdam$size=="20-50",1,0)
-                                                 -0.654240460*ifelse(rotterdam$size==">50",1,0)
-                                                 -0.080821343*rotterdam$nodes
-                                                 -0.393920415*(rotterdam$grade=="3")
-                                                 +0.008095379*rotterdam$age)))
-# Make appropriate graph using CoxSnell function
-CoxSnell(CS_expR, rotterdam$recur)
 ```
-
+![](Cox-Snell/Rexp.png)
 
 3. `dtime, death ~ Treatment + size + nodes + grade + age` under Weibull:
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+```{r}
 Dweibull <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + grade + age, dist='weibull', data=rotterdam)
 Dweibull
-CS_weibullD = -log(1 - pweibull(rotterdam$dtime, 1/0.7370449, exp(10.10735484-0.39504003*(rotterdam$Treatment=="Chemo")
-                                                                         -0.37941684*(rotterdam$Treatment=="Hormon")
-                                                                         -0.35423500*(rotterdam$Treatment=="NaN/Other Treatment")
-                                                                         -0.33487166*ifelse(rotterdam$size=="20-50",1,0)
-                                                                         -0.61672126*ifelse(rotterdam$size==">50",1,0)
-                                                                         -0.05500626*rotterdam$nodes
-                                                                         -0.26093659*(rotterdam$grade=="3")
-                                                                         -0.01130402*rotterdam$age)))
-# Make appropriate graph using CoxSnell function
-CoxSnell(CS_weibullD, rotterdam$death)
 ```
+![](Cox-Snell/DWeibull.png)
 
 4. `rtime, recur ~ Treatment + size + nodes + grade + age` under Weibull:
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+```{r}
 Rweibull <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + grade + age, dist='weibull', data=rotterdam)
 Rweibull
-CS_weibullR = -log(1 - pweibull(rotterdam$rtime, 1/1.014145, exp(9.092880859-0.376425745*(rotterdam$Treatment=="Chemo")
-                                                                         -0.508855839*(rotterdam$Treatment=="Hormon")
-                                                                         -0.489527042*(rotterdam$Treatment=="NaN/Other Treatment")
-                                                                         -0.376473401*ifelse(rotterdam$size=="20-50",1,0)
-                                                                         -0.659532060*ifelse(rotterdam$size==">50",1,0)
-                                                                         -0.081625087 *rotterdam$nodes
-                                                                         -0.398251643*(rotterdam$grade=="3")
-                                                                         +0.008216064*rotterdam$age)))
-# Make appropriate graph using CoxSnell function
-CoxSnell(CS_weibullR, rotterdam$recur)
 ```
-
+![](Cox-Snell/RWeibull.png)
 
 ### Log-normal models
 
