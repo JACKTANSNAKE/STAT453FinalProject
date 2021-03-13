@@ -14,7 +14,9 @@ Of course, there are many limitations within our research and much more that we 
 
 ## Reference
 
-* “Breast Cancer - Stages.” Cancer.Net, 14 Aug. 2020, www.cancer.net/cancer-types/breast-cancer/stages#:~:text=There are 5 stages of,to plan the best treatments.
+* “Breast Cancer - Stages.” Cancer.Net, 14 Aug. 2020, https://www.cancer.net/cancer-types/breast-cancer/stages.
+
+* “Breast Cancer Grades” American Cancer Society, 20 Sep. 2019, https://www.cancer.org/cancer/breast-cancer/understanding-a-breast-cancer-diagnosis/breast-cancer-grades.html.
 
 * “Breast Cancer Statistics.” Centers for Disease Control and Prevention, Centers for Disease Control and Prevention, 8 June 2020, www.cdc.gov/cancer/breast/statistics/index.htm.
 

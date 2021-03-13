@@ -26,7 +26,15 @@ For doctors to be able to assess the severity and different types of breast canc
 
 Generally, the results from the above three features are combined to form a diagnosis of a total of 5 stages of breast cancer: stage 0 (zero), which is non-invasive ductal carcinoma in situ (DCIS), and stages I through IV (1 through 4), which are used for invasive breast cancer.
 
-We will be using data related to this system to conduct our exploration.
+In addition, cancer cells are given a grade when they are removed from the breast and checked in the lab. Based on how much they look like normal cells, there are three grades of cancer cells:
+
+**Grade 1 / well differentiated**: The cells are slower-growing, and look more like normal breast tissue, meaning that cancer is less likely to spread.
+
+**Grade 2 / moderately differentiated**. The cells are growing at a speed of and look like cells somewhere between grades 1 and 3.
+
+**Grade 3 / poorly differentiated**: The cells look very different from normal cells, meaning a faster-growing cancer that’s more likely to spread.
+
+We will use data related to information above to conduct our exploration.
 
 
 

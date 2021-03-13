@@ -1,4 +1,4 @@
-# Survival
+# Survival Analysis
 
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
 library(survival)
@@ -7,8 +7,9 @@ library(tidyverse)
 library(caret)
 ```
 
-## Loading Data
-```{r}
+## Notation
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
 data(rotterdam)
 ```
 
@@ -35,6 +36,12 @@ rotterdam_recur <- rotterdam %>%
   filter(recur == 1) %>%
   mutate(drecurtime = dtime-rtime)
 ```
+
+In survival analysis, there is an important concept called "censoring". Censoring is a kind of missing data problem where an event is not completely observed, for reasons like termination of study or loss of communication with the participant. And censoring will cause the observed time data inaccurate. For instance, for left-censored data, we don't know the exact value of the data point, but only an upper bound for it; And for right-censored data, we only knows a lower bound for it. 
+
+In our dataset `rotterdam`, for the time variable `dtime` and `rtime` that we are curious about, `death` and `recur` are the corresponding variable that records if censoring occured. Since if someone is dead in this study, this means that the survival time we observed is exact; But for someone is still alive in the end of the study, the survival time we observed is just a lower bound. And similarly, if someone suffers from recurrent breast cancer during the study, our `rtime` should be accurate; But for someone did not encounter recurrence of breast cancer in the study, we are not sure if she will encounter in the future, so the data point is also a lower point.
+
+For all the survival analysis below, we will include `death` and `recur` to examine the relationship between `dtime` and `rtime` vs. the diagnostic information and treatment received. 
 
 ## Kaplan-Miere estimator of the entire dataset
 
@@ -250,31 +257,33 @@ The Weibull model is still not adequate.
 Finally, we will examine the adequacy of Log-normal model.
 
 ```{r}
-Dlnorm <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + age , dist='lognormal', data=rotterdam)
+Dlnorm <- survreg(Surv(dtime, death) ~ Treatment + size + nodes + grade + age , dist='lognormal', data=rotterdam)
 Dlnorm
-CS_LnormD <- -log(1 - plnorm(rotterdam$dtime, 9.709442268-0.431016329*(rotterdam$Treatment=="Chemo")
-                                                  -0.346351742*(rotterdam$Treatment=="Hormon")  
-                                                  -0.423626557*(rotterdam$Treatment=="NaN/Other Treatment")
-                                                  -0.372703559*(rotterdam$size=="20-50")
-                                                  -0.654189313*(rotterdam$size==">50")
-                                                  -0.079103425*rotterdam$nodes 
-                                                  -0.009903862*rotterdam$age, 
-                                       1.077329))
+CS_LnormD <- -log(1 - plnorm(rotterdam$dtime, 9.91512622-0.42502769*(rotterdam$Treatment=="Chemo")
+                                                  -0.31448004*(rotterdam$Treatment=="Hormon")  
+                                                  -0.41616843*(rotterdam$Treatment=="NaN/Other Treatment")
+                                                  -0.34787441*(rotterdam$size=="20-50")
+                                                  -0.60916461*(rotterdam$size==">50")
+                                                  -0.07772719*rotterdam$nodes
+                                                  -0.30866307*(rotterdam$grade=="3")
+                                                  -0.01004650*rotterdam$age, 
+                                       1.06897))
 # Make appropriate graph using CoxSnell function
 CoxSnell(CS_LnormD, rotterdam$death)
 ```
 
 ```{r}
-Rlnorm <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + age, dist='lognormal', data=rotterdam)
+Rlnorm <- survreg(Surv(rtime, recur) ~ Treatment + size + nodes + grade + age, dist='lognormal', data=rotterdam)
 Rlnorm
-CS_LnormR <- -log(1 - plnorm(rotterdam$rtime, 8.514204484-0.382172447*(rotterdam$Treatment=="Chemo")
-                                                  -0.479063703*(rotterdam$Treatment=="Hormon")   
-                                                  -0.605193863*(rotterdam$Treatment=="NaN/Other Treatment")
-                                                  -0.458345796*(rotterdam$size=="20-50")
-                                                  -0.738657689*(rotterdam$size==">50")
-                                                  -0.107708963*rotterdam$nodes 
-                                                  +0.009059467*rotterdam$age, 
-                                       1.340545))
+CS_LnormR <- -log(1 - plnorm(rotterdam$rtime, 8.78912009-0.36138607*(rotterdam$Treatment=="Chemo")
+                                                  -0.41809135*(rotterdam$Treatment=="Hormon")   
+                                                  -0.58077716*(rotterdam$Treatment=="NaN/Other Treatment")
+                                                  -0.41865655*(rotterdam$size=="20-50")
+                                                  -0.67178824*(rotterdam$size==">50")
+                                                  -0.10590430*rotterdam$nodes 
+                                                  -0.43987388*(rotterdam$grade=="3")
+                                                  +0.00892277*rotterdam$age, 
+                                      1.327904))
 
 # Make appropriate graph using CoxSnell function
 CoxSnell(CS_LnormR, rotterdam$recur)
@@ -311,7 +320,7 @@ Another very important part of a survival analysis is building and interpreting 
 ### `dtime` coxph model
 
 ```{r}
-m_death_withage = coxph(Surv(dtime, death) ~ Treatment + size + nodes + age, data=rotterdam)
+m_death_withage = coxph(Surv(dtime, death) ~ Treatment + size + nodes + grade + age, data=rotterdam)
 m_death_withage
 ```
 
@@ -326,7 +335,7 @@ One of the variable, `age`, has p-value smaller than 0.05, which indicates the v
 One way we came up to solve this problem is to put stratification on `age` by putting a `strata()` on `age` when fitting the model. What this does is to recognize the correlation between `age` and the `dtime`, but not actually including it in our model results. 
 
 ```{r}
-m_death_strataage = coxph(Surv(dtime, death) ~ Treatment + size + nodes + strata(age), data=rotterdam)
+m_death_strataage = coxph(Surv(dtime, death) ~ Treatment + size + nodes + grade + strata(age), data=rotterdam)
 m_death_strataage
 cox.zph(m_death_strataage)
 ```
